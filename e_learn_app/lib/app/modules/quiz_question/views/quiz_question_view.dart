@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../points_earned/views/points_earned_view.dart';
 
 class QuizQuestionView extends StatelessWidget {
   const QuizQuestionView({Key? key}) : super(key: key);
@@ -527,7 +528,20 @@ class QuizQuestionView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // TODO: Navigate to next question or results
+                  // Show points earned popup
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      opaque: false,
+                      pageBuilder: (context, _, __) => const PointsEarnedView(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1F3D89),
