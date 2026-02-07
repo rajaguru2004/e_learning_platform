@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const sendResponse = require('./Utils/response');
 const authRoutes = require('./Routes/auth.routes');
 const adminRoutes = require('./Routes/adminDashboard.routes');
+const adminUserRoutes = require('./Routes/adminUser.routes');
+const adminRoleRoutes = require('./Routes/adminRole.routes');
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/users', adminUserRoutes);
+app.use('/api/admin/roles', adminRoleRoutes);
 
 // Health Check
 app.get('/', (req, res) => {
