@@ -26,12 +26,9 @@ class LoginController extends GetxController {
       return;
     }
 
-    // TODO: Implement actual sign in logic
-    Get.snackbar(
-      'Success',
-      'Sign in functionality to be implemented',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    // TODO: Implement actual authentication logic
+    // For now, navigate to home screen after basic validation
+    Get.offAllNamed('/home');
   }
 
   // Social login functions
