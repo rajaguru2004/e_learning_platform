@@ -413,50 +413,96 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
   }
 
   Widget _buildUpNextSection() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'UP NEXT',
-              style: GoogleFonts.lexend(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[400],
-                letterSpacing: 1.5,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'See All',
+    return Obx(() {
+      final course = controller.course.value;
+
+      // Get all subtopics from all topics
+      final List<Map<String, dynamic>> allSubtopics = [];
+      if (course != null && course.topics.isNotEmpty) {
+        for (var topic in course.topics) {
+          for (var subtopic in topic.subtopics) {
+            allSubtopics.add({
+              'title': subtopic.title,
+              'duration': subtopic.duration,
+              'videoUrl': subtopic.videoUrl,
+            });
+          }
+        }
+      }
+
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'ALL LESSONS',
                 style: GoogleFonts.lexend(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1F3D89),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[400],
+                  letterSpacing: 1.5,
                 ),
               ),
+              if (allSubtopics.isNotEmpty)
+                Text(
+                  '${allSubtopics.length} lessons',
+                  style: GoogleFonts.lexend(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[500],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Show all lessons from API data (skip the first one as it's currently playing)
+          if (allSubtopics.isNotEmpty)
+            ...allSubtopics.asMap().entries.skip(1).map((entry) {
+              final subtopic = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildUpNextItem(
+                  icon: Icons.play_circle_outline,
+                  title: subtopic['title'],
+                  duration: '${subtopic['duration']} mins • Video',
+                  isLocked: false, // All videos are now unlocked
+                  onTap: () {
+                    // Switch to this video
+                    controller.initializePlayer(subtopic['videoUrl']);
+                    Get.snackbar(
+                      'Playing',
+                      subtopic['title'],
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: const Color(0xFF1F3D89),
+                      colorText: Colors.white,
+                      margin: const EdgeInsets.all(16),
+                      duration: const Duration(seconds: 2),
+                    );
+                  },
+                ),
+              );
+            }).toList()
+          else
+          // Fallback to demo data if no topics available
+          ...[
+            _buildUpNextItem(
+              icon: Icons.play_circle_outline,
+              title: 'Lesson 5: Color Theory in Depth',
+              duration: '12:30 • Video',
+              isLocked: false,
+            ),
+            const SizedBox(height: 12),
+            _buildUpNextItem(
+              icon: Icons.description_outlined,
+              title: 'Lesson 6: Practical Typography',
+              duration: '8:15 • Reading',
+              isLocked: false,
             ),
           ],
-        ),
-        const SizedBox(height: 12),
-        _buildUpNextItem(
-          icon: Icons.play_circle_outline,
-          title: 'Lesson 5: Color Theory in Depth',
-          duration: '12:30 • Video',
-          isLocked: true,
-        ),
-        const SizedBox(height: 12),
-        _buildUpNextItem(
-          icon: Icons.description_outlined,
-          title: 'Lesson 6: Practical Typography',
-          duration: '8:15 • Reading',
-          isLocked: true,
-          opacity: 0.6,
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _buildUpNextItem({
@@ -465,11 +511,12 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
     required String duration,
     required bool isLocked,
     double opacity = 1.0,
+    VoidCallback? onTap,
   }) {
     return Opacity(
       opacity: opacity,
       child: InkWell(
-        onTap: () {},
+        onTap: isLocked ? null : onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(12),
@@ -483,10 +530,10 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: const Color(0xFF1F3D89).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: Colors.grey[400], size: 24),
+                child: Icon(icon, color: const Color(0xFF1F3D89), size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -512,7 +559,10 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
                   ],
                 ),
               ),
-              Icon(Icons.lock_outline, color: Colors.grey[300], size: 20),
+              if (!isLocked)
+                Icon(Icons.play_arrow, color: const Color(0xFF1F3D89), size: 20)
+              else
+                Icon(Icons.lock_outline, color: Colors.grey[300], size: 20),
             ],
           ),
         ),
