@@ -14,6 +14,7 @@ const adminReportingRoutes = require('./Routes/adminReporting.routes');
 const courseRoutes = require('./Routes/course.routes');
 const reviewRoutes = require('./Routes/review.routes');
 const learnerRoutes = require('./Routes/learner.routes');
+const paymentRoutes = require('./Routes/payment.routes');
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/api/admin', adminReportingRoutes);
 app.use('/api/v1/courses', courseRoutes);
 app.use('/api/courses', reviewRoutes);
 app.use('/api/learner', learnerRoutes);
+app.use('/api/learner/payments', paymentRoutes);
 
 // Health Check
 app.get('/', (req, res) => {
