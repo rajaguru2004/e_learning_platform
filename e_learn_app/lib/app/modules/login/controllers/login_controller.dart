@@ -1,19 +1,25 @@
+import 'package:e_learn_app/app/data/models/user_model.dart';
+import 'package:e_learn_app/app/data/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   // Observable variables
   var isPasswordVisible = false.obs;
+  var isLoading = false.obs;
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+
+  // Current user
+  var currentUser = Rxn<UserModel>();
 
   // Toggle password visibility
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  // Sign in function
-  void signIn() {
+  // Sign in function with API integration
+  Future<void> signIn() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
@@ -22,13 +28,45 @@ class LoginController extends GetxController {
         'Error',
         'Please enter both email and password',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
       );
       return;
     }
 
-    // TODO: Implement actual authentication logic
-    // For now, navigate to home screen after basic validation
-    Get.offAllNamed('/home');
+    try {
+      isLoading.value = true;
+
+      // Call login API
+      final response = await AuthService.login(email, password);
+
+      // Store user data
+      currentUser.value = response.data.user;
+
+      // Show success message
+      Get.snackbar(
+        'Success',
+        response.message,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green[100],
+        colorText: Colors.green[900],
+      );
+
+      // Navigate to home screen
+      Get.offAllNamed('/home');
+    } catch (e) {
+      // Show error message
+      Get.snackbar(
+        'Login Failed',
+        e.toString().replaceAll('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[900],
+        duration: const Duration(seconds: 4),
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // Social login functions

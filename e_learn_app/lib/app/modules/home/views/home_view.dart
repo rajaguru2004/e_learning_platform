@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../routes/app_pages.dart';
+import '../../../data/models/learner_course_model.dart'; // Just in case
 import '../controllers/home_controller.dart';
 import '../../../widgets/app_bottom_nav_bar.dart';
 
@@ -16,7 +18,7 @@ class HomeView extends GetView<HomeController> {
   }
 }
 
-class HomeDashboard extends StatelessWidget {
+class HomeDashboard extends GetView<HomeController> {
   const HomeDashboard({super.key});
 
   @override
@@ -80,39 +82,142 @@ class HomeDashboard extends StatelessWidget {
             ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  const CourseCard(
-                    title: 'Advanced UI Design',
-                    description:
-                        'Master the art of visual hierarchy and user psychology in modern web apps.',
-                    category: 'UI/UX',
-                    progress: 0.75,
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400',
-                  ),
-                  const SizedBox(height: 16),
-                  const CourseCard(
-                    title: 'Introduction to Python',
-                    description:
-                        'Learn the fundamentals of programming using the world\'s most popular language.',
-                    category: 'CODING',
-                    progress: 0.32,
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400',
-                  ),
-                  const SizedBox(height: 16),
-                  const CourseCard(
-                    title: 'Financial Literacy 101',
-                    description:
-                        'Building wealth through smart investments and budgeting strategies.',
-                    category: 'FINANCE',
-                    progress: 0.12,
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400',
-                  ),
-                ]),
-              ),
+              sliver: Obx(() {
+                // Show loading indicator
+                if (controller.isLoading.value) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: CircularProgressIndicator(
+                          color: const Color(0xFF1F3D89),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                // Show error message
+                if (controller.errorMessage.value.isNotEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Failed to load courses',
+                              style: GoogleFonts.lexend(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              controller.errorMessage.value,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lexend(
+                                fontSize: 12,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: controller.refreshCourses,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF1F3D89),
+                                foregroundColor: Colors.white,
+                              ),
+                              child: Text(
+                                'Retry',
+                                style: GoogleFonts.lexend(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                // Show empty state
+                if (controller.courses.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.school_outlined,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No courses yet',
+                              style: GoogleFonts.lexend(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Start learning by enrolling in a course',
+                              style: GoogleFonts.lexend(
+                                fontSize: 12,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                // Show courses list
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final course = controller.courses[index];
+                    final imageUrl = controller.getImageUrlForCourse(index);
+
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index < controller.courses.length - 1 ? 16 : 0,
+                      ),
+                      child: CourseCard(
+                        title: course.title,
+                        description: course.description,
+                        category: 'COURSE', // Default category for learner view
+                        // progress: 0.5, // Removed default progress
+                        imageUrl: imageUrl,
+                        price: course.price,
+                        instructorName: course.instructor.name,
+                        duration: course.duration,
+                        rating: course.averageRating,
+                        onTap: () {
+                          print('Navigating to course: ${course.id}');
+                          Get.toNamed(
+                            Routes.COURSE_DETAIL,
+                            arguments: course.id,
+                          );
+                        },
+                      ),
+                    );
+                  }, childCount: controller.courses.length),
+                );
+              }),
             ),
           ],
         ),
@@ -365,16 +470,26 @@ class CourseCard extends StatelessWidget {
   final String title;
   final String description;
   final String category;
-  final double progress;
+  final double? progress;
   final String imageUrl;
+  final String? price;
+  final String? instructorName;
+  final int? duration;
+  final String? rating;
+  final VoidCallback? onTap;
 
   const CourseCard({
     super.key,
     required this.title,
     required this.description,
     required this.category,
-    required this.progress,
+    this.progress,
     required this.imageUrl,
+    this.price,
+    this.instructorName,
+    this.duration,
+    this.rating,
+    this.onTap,
   });
 
   @override
@@ -464,47 +579,47 @@ class CourseCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'IN PROGRESS',
-                      style: GoogleFonts.lexend(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF2EC4B6),
-                        letterSpacing: 1,
+                if (progress != null) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'IN PROGRESS',
+                        style: GoogleFonts.lexend(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF2EC4B6),
+                          letterSpacing: 1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${(progress * 100).toInt()}%',
-                      style: GoogleFonts.lexend(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
+                      Text(
+                        '${(progress! * 100).toInt()}%',
+                        style: GoogleFonts.lexend(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[700],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    backgroundColor: Colors.grey[200],
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFF2EC4B6),
-                    ),
-                    minHeight: 8,
+                    ],
                   ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress!,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFF2EC4B6),
+                      ),
+                      minHeight: 8,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.toNamed('/course-detail');
-                    },
+                    onPressed: onTap,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1F3D89),
                       foregroundColor: Colors.white,
@@ -517,10 +632,12 @@ class CourseCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.play_arrow, size: 18),
+                        const Icon(Icons.shopping_cart_outlined, size: 18),
                         const SizedBox(width: 8),
                         Text(
-                          'Continue Lesson',
+                          price != null && price!.isNotEmpty && price != '0'
+                              ? 'Enroll - ₹$price'
+                              : 'Enroll Now - Free',
                           style: GoogleFonts.lexend(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

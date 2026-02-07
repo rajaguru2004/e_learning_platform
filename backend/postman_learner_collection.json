@@ -1,0 +1,451 @@
+{
+    "info": {
+        "name": "eLearning Platform - Learner APIs",
+        "description": "Complete API collection for testing Learner endpoints including course browsing, enrollment, profile, and achievements",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_postman_id": "learner-api-collection",
+        "version": "1.0.0"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{learner_token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "learner_token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "1. Authentication",
+            "item": [
+                {
+                    "name": "Register Learner",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    console.log('Learner registered successfully');",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"Alex Johnson\",\n  \"email\": \"alex@learner.com\",\n  \"password\": \"alex123456\",\n  \"role\": \"LEARNER\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "Register a new learner account"
+                    }
+                },
+                {
+                    "name": "Login as Learner",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    const response = pm.response.json();",
+                                    "    pm.collectionVariables.set('learner_token', response.data.token);",
+                                    "    console.log('Learner token saved:', response.data.token);",
+                                    "}"
+                                ]
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"alex@learner.com\",\n  \"password\": \"alex123456\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Login as learner and receive authentication token"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. Course Browsing (Public)",
+            "item": [
+                {
+                    "name": "Get All Courses",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/courses?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "courses"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number (default: 1)"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Items per page (default: 10)"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "UI Design",
+                                    "disabled": true,
+                                    "description": "Search in title and description"
+                                },
+                                {
+                                    "key": "categoryId",
+                                    "value": "",
+                                    "disabled": true,
+                                    "description": "Filter by category ID"
+                                },
+                                {
+                                    "key": "minRating",
+                                    "value": "4",
+                                    "disabled": true,
+                                    "description": "Minimum rating (1-5)"
+                                },
+                                {
+                                    "key": "maxPrice",
+                                    "value": "100",
+                                    "disabled": true,
+                                    "description": "Maximum price"
+                                },
+                                {
+                                    "key": "sortBy",
+                                    "value": "createdAt",
+                                    "description": "Sort field (createdAt, averageRating, enrollmentCount)"
+                                },
+                                {
+                                    "key": "sortOrder",
+                                    "value": "desc",
+                                    "description": "Sort order (asc, desc)"
+                                }
+                            ]
+                        },
+                        "description": "Get all available published courses with pagination and advanced filters"
+                    }
+                },
+                {
+                    "name": "Get Course Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/courses/:courseId",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "courses",
+                                ":courseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "courseId",
+                                    "value": "COURSE_ID_HERE",
+                                    "description": "Course UUID"
+                                }
+                            ]
+                        },
+                        "description": "Get detailed information about a specific course including instructor info, reviews, and enrollment status (if authenticated)"
+                    }
+                },
+                {
+                    "name": "Search Courses",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/courses/search?q=ui design&page=1&limit=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "courses",
+                                "search"
+                            ],
+                            "query": [
+                                {
+                                    "key": "q",
+                                    "value": "ui design",
+                                    "description": "Search query"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Search for courses by keywords in title and description"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Enrollment Management (LEARNER)",
+            "item": [
+                {
+                    "name": "Enroll in Course",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"courseId\": \"COURSE_ID_HERE\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/enrollments",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "enrollments"
+                            ]
+                        },
+                        "description": "Enroll the authenticated learner in a course. Returns enrollment details with course information."
+                    }
+                },
+                {
+                    "name": "Get All Enrolled Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/enrollments?page=1&limit=10&sortBy=enrolledAt&sortOrder=desc",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "enrollments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "all",
+                                    "disabled": true,
+                                    "description": "Filter: all, in_progress, completed"
+                                },
+                                {
+                                    "key": "search",
+                                    "value": "",
+                                    "disabled": true,
+                                    "description": "Search in course title/description"
+                                },
+                                {
+                                    "key": "sortBy",
+                                    "value": "enrolledAt"
+                                },
+                                {
+                                    "key": "sortOrder",
+                                    "value": "desc"
+                                }
+                            ]
+                        },
+                        "description": "Get all enrolled courses for the authenticated learner (corresponds to 'All Courses' tab in Library)"
+                    }
+                },
+                {
+                    "name": "Get In Progress Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/enrollments?status=in_progress&page=1&limit=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "enrollments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "in_progress",
+                                    "description": "Filter for in-progress courses only"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Get only in-progress courses for the authenticated learner (corresponds to 'In Progress' tab in Library)"
+                    }
+                },
+                {
+                    "name": "Get Completed Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/enrollments?status=completed&page=1&limit=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "enrollments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "completed",
+                                    "description": "Filter for completed courses only"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Get only completed courses for the authenticated learner (corresponds to 'Completed' tab in Library)"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "4. Profile & Stats (LEARNER)",
+            "item": [
+                {
+                    "name": "Get User Profile",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/profile",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "profile"
+                            ]
+                        },
+                        "description": "Get complete user profile with comprehensive stats:\n- Enrolled courses count\n- Completed courses count\n- In-progress courses count\n- Total points\n- Current badge/rank (Gold Scholar, etc.)\n- Next badge level and points needed\n- Weekly effort score (0-100)\n\nThis API corresponds to the Home screen and Profile screen data."
+                    }
+                },
+                {
+                    "name": "Get User Achievements",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/learner/achievements",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "learner",
+                                "achievements"
+                            ]
+                        },
+                        "description": "Get user achievements and learning path progress:\n- Current rank (Achiever, Specialist, etc.)\n- Total XP/Points\n- Next level information\n- Learning path milestones (Newbie, Explorer, Specialist, Expert)\n- Achievement status for each milestone\n- Overall progress percentage\n- Completed courses count\n\nThis API corresponds to the Achievements/Progress screen data."
+                    }
+                }
+            ]
+        }
+    ]
+}

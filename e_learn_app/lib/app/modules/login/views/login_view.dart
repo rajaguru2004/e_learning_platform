@@ -324,26 +324,39 @@ class LoginView extends GetView<LoginController> {
       child: Column(
         children: [
           // Sign In Button
-          Material(
-            color: const Color(0xFF1F3D89),
-            borderRadius: BorderRadius.circular(12),
-            elevation: 8,
-            shadowColor: const Color(0xFF1F3D89).withOpacity(0.3),
-            child: InkWell(
-              onTap: controller.signIn,
+          Obx(
+            () => Material(
+              color: const Color(0xFF1F3D89),
               borderRadius: BorderRadius.circular(12),
-              child: Container(
-                width: double.infinity,
-                height: 56,
-                alignment: Alignment.center,
-                child: const Text(
-                  'Sign In',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.24,
-                  ),
+              elevation: 8,
+              shadowColor: const Color(0xFF1F3D89).withOpacity(0.3),
+              child: InkWell(
+                onTap: controller.isLoading.value ? null : controller.signIn,
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  width: double.infinity,
+                  height: 56,
+                  alignment: Alignment.center,
+                  child: controller.isLoading.value
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                      : const Text(
+                          'Sign In',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.24,
+                          ),
+                        ),
                 ),
               ),
             ),

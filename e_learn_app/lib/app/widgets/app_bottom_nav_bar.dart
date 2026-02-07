@@ -126,7 +126,7 @@ class AppBottomNavBar extends StatelessWidget {
         return;
     }
 
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => page,
