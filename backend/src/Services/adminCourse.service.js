@@ -114,6 +114,18 @@ const getAllCourses = async ({
                         enrollments: true,
                     },
                 },
+                topics: {
+                    include: {
+                        subtopics: {
+                            orderBy: {
+                                orderIndex: 'asc',
+                            },
+                        },
+                    },
+                    orderBy: {
+                        orderIndex: 'asc',
+                    },
+                },
             },
         }),
         prisma.course.count({ where }),
@@ -139,6 +151,7 @@ const getAllCourses = async ({
             is_active: course.isActive,
             created_at: course.createdAt,
             updated_at: course.updatedAt,
+            topics: course.topics,
         })),
         pagination: {
             page: parseInt(page),

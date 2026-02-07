@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import DataTable from '@/components/admin/ui/DataTable';
 import StatusPill from '@/components/admin/ui/StatusPill';
-import { fetchCourses } from '@/lib/api';
+import { fetchCourses, approveCourse } from '@/lib/api';
 import { Course } from '@/types/courses';
 
 export default function CoursesPage() {
@@ -43,6 +43,21 @@ export default function CoursesPage() {
     const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setStatusFilter(e.target.value);
         setPage(1); // Reset to first page on filter change
+    };
+
+    const handleApproveCourse = async (courseId: string) => {
+        if (!confirm('Are you sure you want to approve this course? This will publish it immediately.')) {
+            return;
+        }
+
+        try {
+            await approveCourse(courseId);
+            alert('Course approved and published successfully');
+            loadCourses(); // Refresh list
+        } catch (err: any) {
+            alert(`Failed to approve course: ${err.message}`);
+            console.error('Error approving course:', err);
+        }
     };
 
     const columns = [
@@ -135,7 +150,7 @@ export default function CoursesPage() {
             label: 'Force Publish',
             icon: '✅',
             variant: 'primary' as const,
-            onClick: (row: any) => alert(`Force publish: ${row.title}`),
+            onClick: (row: any) => handleApproveCourse(row.id),
         },
         {
             label: 'Force Unpublish',

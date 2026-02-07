@@ -50,24 +50,98 @@ async function createCourse(courseData, instructor) {
         throw new Error('DRAFT status not found in system');
     }
 
-    // Create course
-    const course = await prisma.course.create({
-        data: {
-            title,
-            slug,
-            description,
-            instructorId: instructor.id,
-            categoryId,
-            statusCode: draftStatus.code,
-            visibilityCode,
-            accessCode,
-            thumbnailUrl,
-            price,
-            discountedPrice,
-            duration,
-            isActive: true,
-            isLocked: false,
-        },
+    // Create course transaction
+    const result = await prisma.$transaction(async (prisma) => {
+        // 1. Create Course
+        const course = await prisma.course.create({
+            data: {
+                title,
+                slug,
+                description,
+                instructorId: instructor.id,
+                categoryId,
+                statusCode: draftStatus.code,
+                visibilityCode,
+                accessCode,
+                thumbnailUrl,
+                price: parseFloat(price),
+                discountedPrice: discountedPrice ? parseFloat(discountedPrice) : null,
+                duration: duration ? parseInt(duration) : null,
+                isActive: true,
+                isLocked: false,
+            },
+            include: {
+                instructor: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    }
+                }
+            }
+        });
+
+        // 2. Process Topics and Subtopics if provided
+        if (courseData.topics) {
+            let topics = [];
+            try {
+                topics = typeof courseData.topics === 'string'
+                    ? JSON.parse(courseData.topics)
+                    : courseData.topics;
+            } catch (e) {
+                console.error('Error parsing topics JSON:', e);
+            }
+
+            if (Array.isArray(topics) && topics.length > 0) {
+                for (const [tIndex, topic] of topics.entries()) {
+                    const createdTopic = await prisma.topic.create({
+                        data: {
+                            courseId: course.id,
+                            title: topic.title,
+                            description: topic.description,
+                            orderIndex: tIndex,
+                        }
+                    });
+
+                    if (Array.isArray(topic.subtopics) && topic.subtopics.length > 0) {
+                        for (const [sIndex, subtopic] of topic.subtopics.entries()) {
+                            // Check if video file exists for this subtopic
+                            // The controller should have mapped files to subtopic indices or identifiers
+                            // For simplicity, we'll assume the controller passed a map of uploaded files
+
+                            let videoUrl = null;
+                            if (courseData.videoFiles && courseData.videoFiles[`${tIndex}_${sIndex}`]) {
+                                const file = courseData.videoFiles[`${tIndex}_${sIndex}`];
+                                const uploadResult = await require('../Utils/minio.util').uploadVideo(
+                                    file,
+                                    course.id,
+                                    createdTopic.id
+                                );
+                                videoUrl = uploadResult;
+                            }
+
+                            await prisma.subtopic.create({
+                                data: {
+                                    topicId: createdTopic.id,
+                                    title: subtopic.title,
+                                    description: subtopic.description,
+                                    videoUrl: videoUrl,
+                                    duration: subtopic.duration ? parseInt(subtopic.duration) : null,
+                                    orderIndex: sIndex,
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        return course;
+    });
+
+    // Fetch complete course with topics
+    const completeCourse = await prisma.course.findUnique({
+        where: { id: result.id },
         include: {
             instructor: {
                 select: {
@@ -75,11 +149,19 @@ async function createCourse(courseData, instructor) {
                     name: true,
                     email: true,
                 }
+            },
+            topics: {
+                include: {
+                    subtopics: true
+                },
+                orderBy: {
+                    orderIndex: 'asc'
+                }
             }
         }
     });
 
-    return course;
+    return completeCourse;
 }
 
 /**
@@ -140,6 +222,18 @@ async function getMyCourses(instructorId, options = {}) {
                     id: true,
                     name: true,
                     email: true,
+                }
+            },
+            topics: {
+                include: {
+                    subtopics: {
+                        orderBy: {
+                            orderIndex: 'asc'
+                        }
+                    }
+                },
+                orderBy: {
+                    orderIndex: 'asc'
                 }
             }
         }

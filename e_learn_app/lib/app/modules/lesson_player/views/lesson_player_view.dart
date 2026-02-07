@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:chewie/chewie.dart';
 import '../controllers/lesson_player_controller.dart';
 
 class LessonPlayerView extends GetView<LessonPlayerController> {
@@ -105,153 +106,29 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
         aspectRatio: 16 / 9,
         child: Stack(
           children: [
-            // Video thumbnail/background
+            // Video Player Area
             Obx(() {
-              final course = controller.course.value;
+              if (controller.isVideoInitialized.value &&
+                  controller.chewieController != null) {
+                return Center(
+                  child: Chewie(controller: controller.chewieController!),
+                );
+              }
+
+              // Loading or Error State
               return Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      course?.thumbnailUrl ??
-                          'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80',
+                width: double.infinity,
+                color: Colors.black,
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: const Color(0xFF1F3D89),
                     ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.3),
                   ),
                 ),
               );
             }),
-
-            // Play Button
-            Center(
-              child: Obx(
-                () => GestureDetector(
-                  onTap: controller.togglePlay,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFF1F3D89).withOpacity(0.9),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      controller.isPlaying.value
-                          ? Icons.pause
-                          : Icons.play_arrow,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Custom Player Controls
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    // Progress Bar
-                    Obx(
-                      () => Row(
-                        children: [
-                          Expanded(
-                            flex: 5,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    height: 4,
-                                    color: Colors.white.withOpacity(0.3),
-                                  ),
-                                  FractionallySizedBox(
-                                    widthFactor: controller.videoProgress.value,
-                                    child: Container(
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF1F3D89),
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            flex: 3,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
-                              child: Container(
-                                height: 4,
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Controls
-                    Obx(
-                      () => Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${controller.currentTime.value} / ${controller.totalTime.value}',
-                            style: GoogleFonts.lexend(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.settings,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                              const SizedBox(width: 16),
-                              Icon(
-                                Icons.fullscreen,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

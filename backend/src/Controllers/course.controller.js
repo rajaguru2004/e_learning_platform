@@ -6,8 +6,25 @@ const { successResponse, errorResponse } = require('../Utils/response');
  */
 async function createCourse(req, res) {
     try {
-        const courseData = req.body;
+        const courseData = { ...req.body };
         const instructor = req.user;
+
+        // Process uploaded files if any
+        if (req.files && req.files.length > 0) {
+            const videoFiles = {};
+
+            req.files.forEach(file => {
+                // Expected fieldname format: videos_{topicIndex}_{subtopicIndex}
+                const match = file.fieldname.match(/^videos_(\d+)_(\d+)$/);
+                if (match) {
+                    const topicIndex = match[1];
+                    const subtopicIndex = match[2];
+                    videoFiles[`${topicIndex}_${subtopicIndex}`] = file;
+                }
+            });
+
+            courseData.videoFiles = videoFiles;
+        }
 
         const course = await courseService.createCourse(courseData, instructor);
 

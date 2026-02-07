@@ -34,6 +34,19 @@ export interface InstructorCourse {
     reviewer: InstructorInfo | null;
 }
 
+export interface Subtopic {
+    title: string;
+    description: string;
+    duration: number;
+    videoFile?: File | null; // For form state handling
+}
+
+export interface Topic {
+    title: string;
+    description: string;
+    subtopics: Subtopic[];
+}
+
 export interface CreateCourseRequest {
     title: string;
     slug: string;
@@ -43,6 +56,7 @@ export interface CreateCourseRequest {
     price?: number;
     duration: number;
     categoryId?: string;
+    topics?: Topic[];
 }
 
 export interface UpdateCourseRequest {

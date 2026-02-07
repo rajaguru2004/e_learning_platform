@@ -1059,15 +1059,66 @@
                     "name": "Create Course",
                     "request": {
                         "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json"
-                            }
-                        ],
+                        "header": [],
                         "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"title\": \"Advanced Node.js Patterns\",\n  \"slug\": \"advanced-nodejs-patterns\",\n  \"description\": \"Master Node.js design patterns and best practices\",\n  \"categoryId\": \"CATEGORY_ID_HERE\",\n  \"visibilityCode\": \"EVERYONE\",\n  \"accessCode\": \"PAYMENT\",\n  \"price\": 49.99,\n  \"duration\": 120\n}"
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "title",
+                                    "value": "Advanced Node.js Patterns",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "slug",
+                                    "value": "advanced-nodejs-patterns",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "description",
+                                    "value": "Master Node.js design patterns and best practices",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "categoryId",
+                                    "value": "CATEGORY_ID_HERE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "visibilityCode",
+                                    "value": "EVERYONE",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "accessCode",
+                                    "value": "PAYMENT",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "price",
+                                    "value": "49.99",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "duration",
+                                    "value": "120",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "topics",
+                                    "value": "[{\"title\":\"Module 1: Design Patterns\",\"description\":\"Introduction to design patterns\",\"subtopics\":[{\"title\":\"Singleton Pattern\",\"description\":\"Deep dive into Singleton\",\"duration\":300},{\"title\":\"Factory Pattern\",\"description\":\"Understanding Factory method\",\"duration\":450}]}]",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "videos_0_0",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "videos_0_1",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
                         },
                         "url": {
                             "raw": "{{base_url}}/api/v1/courses",

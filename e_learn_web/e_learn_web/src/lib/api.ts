@@ -340,11 +340,69 @@ export async function manualEnrollUser(
  * @returns Promise resolving to created course data
  * @throws Error if the API request fails
  */
+/**
+ * Creates a new course (Instructor only)
+ * - Supports file uploads for course videos via FormData
+ * - Topics structure is passed as a JSON string
+ * @param courseData - Course creation data
+ * @returns Promise resolving to created course data
+ * @throws Error if the API request fails
+ */
 export async function createCourse(courseData: CreateCourseRequest): Promise<CreateCourseResponse> {
+    const formData = new FormData();
+
+    // Append basic fields
+    formData.append('title', courseData.title);
+    formData.append('slug', courseData.slug);
+    formData.append('description', courseData.description);
+    formData.append('visibilityCode', courseData.visibilityCode);
+    formData.append('accessCode', courseData.accessCode);
+    formData.append('duration', courseData.duration.toString());
+
+    if (courseData.price !== undefined) {
+        formData.append('price', courseData.price.toString());
+    }
+
+    if (courseData.categoryId) {
+        formData.append('categoryId', courseData.categoryId);
+    }
+
+    // Handle topics and video files
+    if (courseData.topics && courseData.topics.length > 0) {
+        // Clean topics for JSON payload (remove file objects)
+        const cleanTopics = courseData.topics.map(topic => ({
+            title: topic.title,
+            description: topic.description,
+            subtopics: topic.subtopics.map(sub => ({
+                title: sub.title,
+                description: sub.description,
+                duration: sub.duration
+            }))
+        }));
+
+        formData.append('topics', JSON.stringify(cleanTopics));
+
+        // Append video files with specific keys: videos_{topicIndex}_{subtopicIndex}
+        courseData.topics.forEach((topic, topicIndex) => {
+            topic.subtopics.forEach((subtopic, subtopicIndex) => {
+                if (subtopic.videoFile) {
+                    formData.append(`videos_${topicIndex}_${subtopicIndex}`, subtopic.videoFile);
+                }
+            });
+        });
+    }
+
+    // Custom headers handling: Do NOT set Content-Type to application/json for FormData
+    const headers: HeadersInit = {};
+    const token = getToken();
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/v1/courses`, {
         method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(courseData),
+        headers: headers, // Let browser set Content-Type with boundary
+        body: formData,
     });
 
     if (!response.ok) {

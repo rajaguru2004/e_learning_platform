@@ -93,6 +93,18 @@ async function getAllCourses(options = {}) {
                     id: true,
                     name: true,
                 }
+            },
+            topics: {
+                include: {
+                    subtopics: {
+                        orderBy: {
+                            orderIndex: 'asc'
+                        }
+                    }
+                },
+                orderBy: {
+                    orderIndex: 'asc'
+                }
             }
         }
     });
@@ -138,6 +150,18 @@ async function getCourseDetails(courseId, userId = null) {
                     id: true,
                     name: true,
                     email: true,
+                }
+            },
+            topics: {
+                include: {
+                    subtopics: {
+                        orderBy: {
+                            orderIndex: 'asc'
+                        }
+                    }
+                },
+                orderBy: {
+                    orderIndex: 'asc'
                 }
             },
             reviews: {

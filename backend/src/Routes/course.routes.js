@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const courseController = require('../Controllers/course.controller');
 const { verifyToken, requireRole } = require('../Middlewares/auth.middleware');
+const upload = require('../Middlewares/upload.middleware');
 
 /**
  * Course Routes (Instructor)
@@ -14,6 +15,7 @@ const { verifyToken, requireRole } = require('../Middlewares/auth.middleware');
 router.post('/',
     verifyToken,
     requireRole(['INSTRUCTOR']),
+    upload.any(), // Accept any files, filtering is done in middleware/controller
     courseController.createCourse
 );
 

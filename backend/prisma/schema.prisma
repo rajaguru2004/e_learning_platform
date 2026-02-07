@@ -406,6 +406,7 @@ model Course {
   reviewer    User?          @relation("CourseReviewer", fields: [reviewedBy], references: [id])
   enrollments Enrollment[]
   reviews     CourseReview[]
+  topics      Topic[]
 
   @@index([instructorId])
   @@index([statusCode])
@@ -419,6 +420,47 @@ model Course {
   @@index([statusCode, instructorId])
   @@index([statusCode, isActive])
   @@map("courses")
+}
+
+// ============================================================================
+// COURSE CONTENT STRUCTURE
+// ============================================================================
+
+model Topic {
+  id          String     @id @default(uuid())
+  courseId    String     @map("course_id")
+  title       String
+  description String?    @db.Text
+  orderIndex  Int        @map("order_index") // For ordering topics within a course
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  course    Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  subtopics Subtopic[]
+
+  @@index([courseId])
+  @@index([orderIndex])
+  @@map("topics")
+}
+
+model Subtopic {
+  id          String    @id @default(uuid())
+  topicId     String    @map("topic_id")
+  title       String
+  description String?   @db.Text
+  videoUrl    String?   @map("video_url") // MinIO S3 URL
+  duration    Int?      // Duration in seconds
+  orderIndex  Int       @map("order_index") // For ordering subtopics within a topic
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@index([topicId])
+  @@index([orderIndex])
+  @@map("subtopics")
 }
 
 // ============================================================================
