@@ -44,11 +44,6 @@ const navigationItems: NavItem[] = [
         ],
     },
     {
-        label: 'Content & Quiz Oversight',
-        href: '/admin/content',
-        icon: '📖',
-    },
-    {
         label: 'Gamification',
         href: '/admin/gamification',
         icon: '🏆',
@@ -62,16 +57,6 @@ const navigationItems: NavItem[] = [
         label: 'Analytics & Reports',
         href: '/admin/analytics',
         icon: '📈',
-    },
-    {
-        label: 'System Configuration',
-        href: '/admin/settings',
-        icon: '⚙️',
-    },
-    {
-        label: 'Audit Logs',
-        href: '/admin/audit-logs',
-        icon: '🔒',
     },
 ];
 
@@ -169,11 +154,12 @@ export default function AdminSidebar() {
             >
                 {navigationItems
                     .filter((item) => {
-                        // Hide "My Courses" for non-instructors
-                        if (item.label === 'My Courses' && !isUserInstructor) {
-                            return false;
+                        // If user is instructor, ONLY show "My Courses"
+                        if (isUserInstructor) {
+                            return item.label === 'My Courses';
                         }
-                        return true;
+                        // For non-instructors, show everything EXCEPT "My Courses"
+                        return item.label !== 'My Courses';
                     })
                     .map((item) => (
                         <div key={item.label}>

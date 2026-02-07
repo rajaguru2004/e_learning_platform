@@ -75,8 +75,12 @@ export default function LoginPage() {
                 role: response.data.user.role.code
             });
 
-            // Redirect to admin dashboard
-            router.push('/admin/dashboard');
+            // Redirect based on role
+            if (response.data.user.role.code === 'INSTRUCTOR') {
+                router.push('/admin/instructor/dashboard');
+            } else {
+                router.push('/admin/dashboard');
+            }
         } catch (error) {
             console.error('Login error:', error);
             setErrors({

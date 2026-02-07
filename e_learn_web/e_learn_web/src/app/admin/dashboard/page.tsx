@@ -1,17 +1,25 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import StatsCard from '@/components/admin/ui/StatsCard';
 import { fetchDashboardData } from '@/lib/api';
 import { DashboardData } from '@/types/dashboard';
+import { isInstructor } from '@/lib/auth';
 
 export default function DashboardPage() {
+    const router = useRouter();
     const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (isInstructor()) {
+            router.push('/admin/instructor/dashboard');
+            return;
+        }
+
         const loadDashboardData = async () => {
             try {
                 setIsLoading(true);
