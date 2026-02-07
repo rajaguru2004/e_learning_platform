@@ -56,7 +56,7 @@ class AchievementsView extends StatelessWidget {
     final textColor = isDark ? Colors.white : primaryColor;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF13161F).withOpacity(0.8)
@@ -70,25 +70,15 @@ class AchievementsView extends StatelessWidget {
         ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            child: SizedBox(
-              width: 48,
-              height: 48,
-              child: Icon(Icons.arrow_back_ios, color: textColor, size: 24),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              'Achievements',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lexend(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                letterSpacing: -0.5,
-              ),
+          Text(
+            'Progress',
+            style: GoogleFonts.lexend(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+              letterSpacing: -0.5,
             ),
           ),
           Container(

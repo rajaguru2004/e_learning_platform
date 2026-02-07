@@ -91,31 +91,10 @@ class ProfileView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(
-                          Icons.arrow_back_ios_new,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ),
                     Text(
                       'Profile',
                       style: GoogleFonts.lexend(
-                        fontSize: 18,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
