@@ -19,4 +19,14 @@ const sendResponse = (res, status, success, message, data = null) => {
     return res.status(status).json(response);
 };
 
+const successResponse = (res, data, message = 'Success', status = 200) => {
+    return sendResponse(res, status, true, message, data);
+};
+
+const errorResponse = (res, message = 'Error', status = 500) => {
+    return sendResponse(res, status, false, message);
+};
+
 module.exports = sendResponse;
+module.exports.successResponse = successResponse;
+module.exports.errorResponse = errorResponse;

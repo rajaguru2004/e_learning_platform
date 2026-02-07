@@ -1,5 +1,5 @@
 const express = require('express');
-const authenticate = require('../Middlewares/auth.middleware');
+const { verifyToken: authenticate } = require('../Middlewares/auth.middleware');
 const requireRole = require('../Middlewares/role.middleware');
 const adminDashboardController = require('../Controllers/adminDashboard.controller');
 

@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
-const sendResponse = require('../Utils/response');
+const { errorResponse } = require('../Utils/response');
 
 const verifyToken = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
-        return sendResponse(res, 401, false, 'Access Denied. No token provided.');
+        return errorResponse(res, 'Access Denied', 401);
     }
 
     try {
@@ -13,8 +13,20 @@ const verifyToken = (req, res, next) => {
         req.user = verified;
         next();
     } catch (error) {
-        return sendResponse(res, 400, false, 'Invalid Token');
+        return errorResponse(res, 'Invalid Token', 400);
     }
 };
 
-module.exports = verifyToken;
+const requireRole = (roles) => {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return errorResponse(res, 'Access Denied: Insufficient Permissions', 403);
+        }
+        next();
+    };
+};
+
+module.exports = {
+    verifyToken,
+    requireRole
+};
