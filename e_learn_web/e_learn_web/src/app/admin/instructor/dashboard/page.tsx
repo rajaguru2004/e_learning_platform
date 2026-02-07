@@ -146,7 +146,10 @@ export default function InstructorDashboard() {
         <AdminLayout
             pageTitle="My Courses"
             headerActions={
-                <button className="admin-btn admin-btn-primary" onClick={openCreateModal}>
+                <button
+                    className="admin-btn admin-btn-primary"
+                    onClick={() => router.push('/admin/instructor/courses/create')}
+                >
                     + Create Course
                 </button>
             }
@@ -192,7 +195,10 @@ export default function InstructorDashboard() {
                             : 'You have not created any courses yet'}
                     </p>
                     {!searchQuery && statusFilter === 'ALL' && (
-                        <button className="admin-btn admin-btn-primary" onClick={openCreateModal}>
+                        <button
+                            className="admin-btn admin-btn-primary"
+                            onClick={() => router.push('/admin/instructor/courses/create')}
+                        >
                             Create Your First Course
                         </button>
                     )}
