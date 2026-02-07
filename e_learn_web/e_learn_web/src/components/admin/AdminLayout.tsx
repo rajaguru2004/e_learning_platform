@@ -3,7 +3,7 @@
 import React from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
-import '../app/admin/admin.css';
+import '../../app/admin/admin.css';
 
 interface AdminLayoutProps {
     children: React.ReactNode;

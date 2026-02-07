@@ -1,53 +1,53 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import DataTable from '@/components/admin/ui/DataTable';
 import StatusPill from '@/components/admin/ui/StatusPill';
+import { fetchCourses } from '@/lib/api';
+import { Course } from '@/types/courses';
 
 export default function CoursesPage() {
-    const courses = [
-        {
-            id: 1,
-            name: 'Introduction to Python Programming',
-            instructor: 'Sarah Johnson',
-            status: 'published',
-            visibility: 'Public',
-            accessType: 'Free',
-            lastUpdated: '2026-02-05',
-        },
-        {
-            id: 2,
-            name: 'Advanced Machine Learning',
-            instructor: 'Robert Wilson',
-            status: 'published',
-            visibility: 'Public',
-            accessType: 'Paid',
-            lastUpdated: '2026-02-06',
-        },
-        {
-            id: 3,
-            name: 'Web Development Bootcamp',
-            instructor: 'Sarah Johnson',
-            status: 'draft',
-            visibility: 'Private',
-            accessType: 'Free',
-            lastUpdated: '2026-02-07',
-        },
-        {
-            id: 4,
-            name: 'Data Science Fundamentals',
-            instructor: 'Robert Wilson',
-            status: 'archived',
-            visibility: 'Public',
-            accessType: 'Paid',
-            lastUpdated: '2026-01-20',
-        },
-    ];
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+        loadCourses();
+    }, [page, statusFilter, searchQuery]);
+
+    const loadCourses = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetchCourses(page, 10, statusFilter, searchQuery);
+            setCourses(response.data.courses);
+            setTotalPages(response.data.pagination.totalPages);
+        } catch (err: any) {
+            setError(err.message || 'Failed to load courses');
+            console.error('Error loading courses:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+        setPage(1); // Reset to first page on search
+    };
+
+    const handleStatusFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setStatusFilter(e.target.value);
+        setPage(1); // Reset to first page on filter change
+    };
 
     const columns = [
         {
-            key: 'name',
+            key: 'title',
             label: 'Course Name',
             render: (value: string) => (
                 <div>
@@ -60,11 +60,20 @@ export default function CoursesPage() {
         {
             key: 'instructor',
             label: 'Instructor',
+            render: (value: any) => value.name,
         },
         {
             key: 'status',
             label: 'Status',
-            render: (value: string) => <StatusPill status={value as any} />,
+            render: (value: string) => {
+                const statusMap: Record<string, 'published' | 'draft' | 'under-review' | 'archived'> = {
+                    'PUBLISHED': 'published',
+                    'DRAFT': 'draft',
+                    'UNDER_REVIEW': 'under-review',
+                    'ARCHIVED': 'archived',
+                };
+                return <StatusPill status={statusMap[value] || 'draft'} />;
+            },
         },
         {
             key: 'visibility',
@@ -73,8 +82,8 @@ export default function CoursesPage() {
                 <span
                     className="admin-pill"
                     style={{
-                        background: value === 'Public' ? 'rgba(46, 196, 182, 0.1)' : 'rgba(142, 142, 142, 0.1)',
-                        color: value === 'Public' ? 'var(--admin-mint-green)' : 'var(--admin-text-secondary)',
+                        background: value === 'EVERYONE' ? 'rgba(46, 196, 182, 0.1)' : 'rgba(142, 142, 142, 0.1)',
+                        color: value === 'EVERYONE' ? 'var(--admin-mint-green)' : 'var(--admin-text-secondary)',
                     }}
                 >
                     {value}
@@ -82,14 +91,14 @@ export default function CoursesPage() {
             ),
         },
         {
-            key: 'accessType',
+            key: 'access_type',
             label: 'Access',
             render: (value: string) => (
                 <span
                     className="admin-pill"
                     style={{
-                        background: value === 'Paid' ? 'rgba(244, 196, 48, 0.1)' : 'rgba(46, 196, 182, 0.1)',
-                        color: value === 'Paid' ? 'var(--admin-reward-yellow)' : 'var(--admin-mint-green)',
+                        background: value === 'PAYMENT' ? 'rgba(244, 196, 48, 0.1)' : 'rgba(46, 196, 182, 0.1)',
+                        color: value === 'PAYMENT' ? 'var(--admin-reward-yellow)' : 'var(--admin-mint-green)',
                     }}
                 >
                     {value}
@@ -97,7 +106,16 @@ export default function CoursesPage() {
             ),
         },
         {
-            key: 'lastUpdated',
+            key: 'price',
+            label: 'Price',
+            render: (value: string, row: Course) => (
+                <span style={{ color: 'var(--admin-text-primary)', fontSize: 'var(--admin-text-sm)' }}>
+                    {row.access_type === 'PAYMENT' ? `$${value}` : 'Free'}
+                </span>
+            ),
+        },
+        {
+            key: 'updated_at',
             label: 'Last Updated',
             render: (value: string) => (
                 <span style={{ color: 'var(--admin-text-secondary)', fontSize: 'var(--admin-text-sm)' }}>
@@ -111,36 +129,63 @@ export default function CoursesPage() {
         {
             label: 'View Course',
             icon: '👁️',
-            onClick: (row: any) => alert(`View: ${row.name}`),
+            onClick: (row: any) => alert(`View: ${row.title}`),
         },
         {
             label: 'Force Publish',
             icon: '✅',
             variant: 'primary' as const,
-            onClick: (row: any) => alert(`Force publish: ${row.name}`),
+            onClick: (row: any) => alert(`Force publish: ${row.title}`),
         },
         {
             label: 'Force Unpublish',
             icon: '⏸️',
-            onClick: (row: any) => alert(`Force unpublish: ${row.name}`),
+            onClick: (row: any) => alert(`Force unpublish: ${row.title}`),
         },
         {
             label: 'Lock Course',
             icon: '🔒',
-            onClick: (row: any) => alert(`Lock: ${row.name}`),
+            onClick: (row: any) => alert(`Lock: ${row.title}`),
         },
         {
             label: 'Archive',
             icon: '📦',
-            onClick: (row: any) => alert(`Archive: ${row.name}`),
+            onClick: (row: any) => alert(`Archive: ${row.title}`),
         },
         {
             label: 'Delete',
             icon: '🗑️',
             variant: 'danger' as const,
-            onClick: (row: any) => alert(`Delete: ${row.name}`),
+            onClick: (row: any) => alert(`Delete: ${row.title}`),
         },
     ];
+
+    if (loading && courses.length === 0) {
+        return (
+            <AdminLayout pageTitle="Course Oversight">
+                <div className="admin-card" style={{ textAlign: 'center', padding: 'var(--admin-space-2xl)' }}>
+                    Loading courses...
+                </div>
+            </AdminLayout>
+        );
+    }
+
+    if (error) {
+        return (
+            <AdminLayout pageTitle="Course Oversight">
+                <div className="admin-card" style={{ textAlign: 'center', padding: 'var(--admin-space-2xl)', color: 'var(--admin-danger)' }}>
+                    Error: {error}
+                    <button
+                        className="admin-btn admin-btn-primary"
+                        style={{ marginTop: 'var(--admin-space-md)' }}
+                        onClick={loadCourses}
+                    >
+                        Retry
+                    </button>
+                </div>
+            </AdminLayout>
+        );
+    }
 
     return (
         <AdminLayout
@@ -166,22 +211,48 @@ export default function CoursesPage() {
                     placeholder="Search courses..."
                     className="admin-input"
                     style={{ flex: 1 }}
+                    value={searchQuery}
+                    onChange={handleSearch}
                 />
-                <select className="admin-select" style={{ width: '200px' }}>
-                    <option>All Statuses</option>
-                    <option>Published</option>
-                    <option>Draft</option>
-                    <option>Archived</option>
-                </select>
-                <select className="admin-select" style={{ width: '200px' }}>
-                    <option>All Instructors</option>
-                    <option>Sarah Johnson</option>
-                    <option>Robert Wilson</option>
+                <select
+                    className="admin-select"
+                    style={{ width: '200px' }}
+                    value={statusFilter}
+                    onChange={handleStatusFilter}
+                >
+                    <option value="all">All Statuses</option>
+                    <option value="PUBLISHED">Published</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="UNDER_REVIEW">Under Review</option>
+                    <option value="ARCHIVED">Archived</option>
                 </select>
             </div>
 
             {/* Courses Table */}
             <DataTable columns={columns} data={courses} actions={actions} />
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div style={{ marginTop: 'var(--admin-space-xl)', display: 'flex', justifyContent: 'center', gap: 'var(--admin-space-sm)' }}>
+                    <button
+                        className="admin-btn admin-btn-secondary admin-btn-sm"
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                    >
+                        Previous
+                    </button>
+                    <span style={{ padding: 'var(--admin-space-sm)', color: 'var(--admin-text-secondary)' }}>
+                        Page {page} of {totalPages}
+                    </span>
+                    <button
+                        className="admin-btn admin-btn-secondary admin-btn-sm"
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </AdminLayout>
     );
 }

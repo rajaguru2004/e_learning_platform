@@ -1,0 +1,301 @@
+// API client utilities for e-learning platform
+
+import { DashboardResponse } from '@/types/dashboard';
+import { LoginRequest, LoginResponse } from '@/types/auth';
+import { UsersResponse } from '@/types/users';
+import { RolesResponse, CreateRoleRequest, CreateRoleResponse } from '@/types/roles';
+import { CoursesResponse, ApproveRejectResponse } from '@/types/courses';
+import { EnrollmentsResponse, ManualEnrollRequest, ManualEnrollResponse } from '@/types/enrollments';
+import { getToken } from '@/lib/auth';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+
+/**
+ * Creates headers with authentication token if available
+ */
+function getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+    };
+
+    const token = getToken();
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+}
+
+/**
+ * Login user with email and password
+ * @param credentials - User login credentials
+ * @returns Promise resolving to login response with user data and token
+ * @throws Error if login fails
+ */
+export async function login(credentials: LoginRequest): Promise<LoginResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Login failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data: LoginResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches admin dashboard statistics from the backend API
+ * @returns Promise resolving to dashboard data
+ * @throws Error if the API request fails
+ */
+export async function fetchDashboardData(): Promise<DashboardResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/dashboard`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
+    }
+
+    const data: DashboardResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches users from the backend API with pagination and filters
+ * @param page - Page number (default: 1)
+ * @param limit - Number of users per page (default: 10)
+ * @param role - Filter by role code (optional)
+ * @param status - Filter by status (optional)
+ * @param search - Search query for name/email (optional)
+ * @returns Promise resolving to users data with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchUsers(
+    page: number = 1,
+    limit: number = 10,
+    role?: string,
+    status?: string,
+    search?: string
+): Promise<UsersResponse> {
+    // Build query parameters
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    if (role && role !== 'all') {
+        params.append('role', role);
+    }
+
+    if (status && status !== 'all') {
+        params.append('status', status);
+    }
+
+    if (search) {
+        params.append('search', search);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/users?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.status} ${response.statusText}`);
+    }
+
+    const data: UsersResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches roles from the backend API
+ * @returns Promise resolving to roles data
+ * @throws Error if the API request fails
+ */
+export async function fetchRoles(): Promise<RolesResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/roles`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch roles: ${response.status} ${response.statusText}`);
+    }
+
+    const data: RolesResponse = await response.json();
+    return data;
+}
+
+/**
+ * Creates a new role with specified permissions
+ * @param roleData - Role data including name and permissions
+ * @returns Promise resolving to the created role
+ * @throws Error if the API request fails
+ */
+export async function createRole(roleData: CreateRoleRequest): Promise<CreateRoleResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/roles`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(roleData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to create role: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CreateRoleResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches courses from the backend API with pagination and filters
+ * @param page - Page number (default: 1)
+ * @param limit - Number of courses per page (default: 10)
+ * @param status - Filter by status (optional)
+ * @param search - Search query for title (optional)
+ * @returns Promise resolving to courses data with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchCourses(
+    page: number = 1,
+    limit: number = 10,
+    status?: string,
+    search?: string
+): Promise<CoursesResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    if (status && status !== 'all') {
+        params.append('status', status);
+    }
+
+    if (search) {
+        params.append('search', search);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/courses?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch courses: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CoursesResponse = await response.json();
+    return data;
+}
+
+/**
+ * Approves a course
+ * @param courseId - ID of the course to approve
+ * @returns Promise resolving to approval response
+ * @throws Error if the API request fails
+ */
+export async function approveCourse(courseId: string): Promise<ApproveRejectResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/courses/${courseId}/approve`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to approve course: ${response.status} ${response.statusText}`);
+    }
+
+    const data: ApproveRejectResponse = await response.json();
+    return data;
+}
+
+/**
+ * Rejects a course with review notes
+ * @param courseId - ID of the course to reject
+ * @param reviewNote - Mandatory review notes explaining the rejection
+ * @returns Promise resolving to rejection response
+ * @throws Error if the API request fails
+ */
+export async function rejectCourse(courseId: string, reviewNote: string): Promise<ApproveRejectResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/courses/${courseId}/reject`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify({ review_note: reviewNote }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to reject course: ${response.status} ${response.statusText}`);
+    }
+
+    const data: ApproveRejectResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches enrollments for a specific course
+ * @param courseId - ID of the course
+ * @param page - Page number (default: 1)
+ * @param limit - Number of enrollments per page (default: 10)
+ * @returns Promise resolving to enrollments data with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchCourseEnrollments(
+    courseId: string,
+    page: number = 1,
+    limit: number = 10
+): Promise<EnrollmentsResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/courses/${courseId}/enrollments?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch enrollments: ${response.status} ${response.statusText}`);
+    }
+
+    const data: EnrollmentsResponse = await response.json();
+    return data;
+}
+
+/**
+ * Manually enrolls a user to a course
+ * @param courseId - ID of the course
+ * @param enrollData - Enrollment data including user_id and access duration
+ * @returns Promise resolving to enrollment response
+ * @throws Error if the API request fails
+ */
+export async function manualEnrollUser(
+    courseId: string,
+    enrollData: ManualEnrollRequest
+): Promise<ManualEnrollResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/courses/${courseId}/enroll`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(enrollData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to enroll user: ${response.status} ${response.statusText}`);
+    }
+
+    const data: ManualEnrollResponse = await response.json();
+    return data;
+}
