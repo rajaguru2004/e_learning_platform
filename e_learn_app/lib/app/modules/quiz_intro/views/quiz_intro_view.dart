@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../quiz_question/views/quiz_question_view.dart';
 
 class QuizIntroView extends StatelessWidget {
   const QuizIntroView({Key? key}) : super(key: key);
@@ -338,7 +339,7 @@ class QuizIntroView extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // TODO: Navigate to quiz screen
+          Get.to(() => const QuizQuestionView());
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF1F3D89),
