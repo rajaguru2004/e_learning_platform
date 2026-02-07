@@ -55,33 +55,33 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            // TODO: Implement actual API call
-            // Example:
-            // const response = await fetch('/api/auth/login', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify({
-            //     email: formData.email,
-            //     password: formData.password
-            //   })
-            // });
-            // const data = await response.json();
+            // Import dependencies dynamically to avoid SSR issues
+            const { login } = await import('@/lib/api');
+            const { saveToken, saveUser } = await import('@/lib/auth');
 
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            console.log('Login attempt:', {
+            // Call login API
+            const response = await login({
                 email: formData.email,
-                rememberMe: formData.rememberMe
+                password: formData.password
             });
 
-            // After successful login, redirect to admin courses
-            router.push('/admin-courses');
+            // Save auth token and user data
+            saveToken(response.data.token);
+            saveUser(response.data.user);
+
+            console.log('Login successful:', {
+                email: formData.email,
+                userId: response.data.user.id,
+                role: response.data.user.role.code
+            });
+
+            // Redirect to admin dashboard
+            router.push('/admin/dashboard');
         } catch (error) {
             console.error('Login error:', error);
             setErrors({
                 email: '',
-                password: 'Invalid email or password. Please try again.'
+                password: error instanceof Error ? error.message : 'Invalid email or password. Please try again.'
             });
         } finally {
             setIsLoading(false);
