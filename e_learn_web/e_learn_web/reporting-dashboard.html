@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>eLearning Reporting Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f3d89",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#13161f",
+                        "success-teal": "#2EC4B6",
+                        "effort-gold": "#F4C430",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="w-20 lg:w-64 bg-primary text-white flex flex-col transition-all duration-300">
+            <div class="p-6 flex items-center gap-3">
+                <div class="bg-white/20 p-2 rounded-lg">
+                    <span class="material-symbols-outlined text-white">school</span>
+                </div>
+                <h2 class="font-bold text-xl hidden lg:block tracking-tight">LearnAdmin</h2>
+            </div>
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="hidden lg:block font-medium">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-3 rounded-lg bg-white/20 shadow-sm transition-colors"
+                    href="#">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="hidden lg:block font-medium">Reporting</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" href="#">
+                    <span class="material-symbols-outlined">book</span>
+                    <span class="hidden lg:block font-medium">Courses</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" href="#">
+                    <span class="material-symbols-outlined">group</span>
+                    <span class="hidden lg:block font-medium">Participants</span>
+                </a>
+                <a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="hidden lg:block font-medium">Settings</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-white/10">
+                <div class="flex items-center gap-3 px-2">
+                    <img alt="User Profile" class="w-10 h-10 rounded-full border-2 border-white/20"
+                        data-alt="Professional headshot of a male admin user"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuArofEYSll9RAKlDv54RuRgTE2viKBtTQ-zQo5RmrbAdmqUtnaTJMksDh1chynsRJBqcqVqi1JQUgrOsz5T7tKJRDLHHHcP0TcdG8gLOpezqMaz4I1Ng0W8LYfGz_xBr7kpvjcLN-s3qcmitVx8Eo5Ba7cluWByStWOB3jUXZiBj8XZ-n7bBJ4IBmZR8D5dExZbIRhf98xNC01Ith2uDak_MxQ3lKH1wkFLWR5Z7p1wZRCPJDclpdKWYXB0G47YihRMlNAr-Pqnjc4" />
+                    <div class="hidden lg:block overflow-hidden">
+                        <p class="text-sm font-bold truncate">Alex Morgan</p>
+                        <p class="text-xs text-white/60 truncate">System Admin</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header
+                class="h-16 bg-white dark:bg-background-dark/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 z-10">
+                <div class="flex items-center gap-4 flex-1 max-w-xl">
+                    <div class="relative w-full">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                        <input
+                            class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary"
+                            placeholder="Search for participants, courses, or reports..." type="text" />
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span
+                            class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 transition-all">
+                        <span class="material-symbols-outlined text-sm">download</span>
+                        Export Report
+                    </button>
+                </div>
+            </header>
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-8 space-y-8 bg-background-light dark:bg-background-dark">
+                <!-- Page Title -->
+                <div>
+                    <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Reporting Analytics
+                    </h1>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1">Real-time overview of student engagement and
+                        course completions.</p>
+                </div>
+                <!-- KPI Cards Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Card 1 -->
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="material-symbols-outlined text-slate-400">groups</span>
+                        </div>
+                        <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Participants</p>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white">1,240</h3>
+                    </div>
+                    <!-- Card 2 -->
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="material-symbols-outlined text-slate-400">pending_actions</span>
+                        </div>
+                        <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Yet to Start</p>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white">156</h3>
+                    </div>
+                    <!-- Card 3 -->
+                    <div
+                        class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="material-symbols-outlined text-primary">autoplay</span>
+                        </div>
+                        <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">In Progress</p>
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white">432</h3>
+                    </div>
+                    <!-- Card 4 (Highlighted Teal) -->
+                    <div
+                        class="bg-success-teal/10 dark:bg-success-teal/5 p-6 rounded-xl border border-success-teal/30 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="material-symbols-outlined text-success-teal">check_circle</span>
+                        </div>
+                        <p class="text-success-teal/80 text-xs font-bold uppercase tracking-wider mb-1">Completed</p>
+                        <h3 class="text-2xl font-black text-success-teal">652</h3>
+                        <div class="absolute -right-2 -bottom-2 opacity-10">
+                            <span class="material-symbols-outlined text-8xl text-success-teal">task_alt</span>
+                        </div>
+                    </div>
+                    <!-- Card 5 (Highlighted Gold) -->
+                    <div
+                        class="bg-effort-gold/10 dark:bg-effort-gold/5 p-6 rounded-xl border border-effort-gold/30 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="material-symbols-outlined text-effort-gold">speed</span>
+                        </div>
+                        <p class="text-effort-gold/80 text-xs font-bold uppercase tracking-wider mb-1">Average Effort
+                            Score</p>
+                        <h3 class="text-2xl font-black text-effort-gold">88%</h3>
+                        <div class="absolute -right-2 -bottom-2 opacity-10">
+                            <span class="material-symbols-outlined text-8xl text-effort-gold">trending_up</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Data Table Section -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div
+                        class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
+                        <h4 class="font-bold text-slate-900 dark:text-white">Recent Activity</h4>
+                        <div class="flex items-center gap-2">
+                            <button
+                                class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
+                                <span class="material-symbols-outlined text-sm">filter_list</span>
+                                Filter
+                            </button>
+                            <button
+                                class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
+                                <span class="material-symbols-outlined text-sm">sort</span>
+                                Sort
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead
+                                class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
+                                <tr>
+                                    <th class="px-6 py-4">Participant Name</th>
+                                    <th class="px-6 py-4">Course Name</th>
+                                    <th class="px-6 py-4">Completion Status</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Last Active</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                <!-- Row 1 -->
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                                                JD</div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-900 dark:text-white">Jane Doe</p>
+                                                <p class="text-xs text-slate-500">jane.doe@enterprise.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Cybersecurity
+                                        Fundamentals</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-success-teal" style="width: 100%"></div>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-900 dark:text-white">100%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="px-2.5 py-1 text-[10px] font-black uppercase rounded bg-success-teal/10 text-success-teal border border-success-teal/20">Completed</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">2 hours ago</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-slate-400 hover:text-primary"><span
+                                                class="material-symbols-outlined">more_vert</span></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 2 -->
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                                JS</div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-900 dark:text-white">John Smith
+                                                </p>
+                                                <p class="text-xs text-slate-500">j.smith@corp.org</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Project Management
+                                        Pro</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary" style="width: 65%"></div>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-900 dark:text-white">65%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="px-2.5 py-1 text-[10px] font-black uppercase rounded bg-primary/10 text-primary border border-primary/20">In
+                                            Progress</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">Yesterday, 4:15 PM</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-slate-400 hover:text-primary"><span
+                                                class="material-symbols-outlined">more_vert</span></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 3 -->
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
+                                                RW</div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-900 dark:text-white">Robert
+                                                    Wilson</p>
+                                                <p class="text-xs text-slate-500">robert.w@tech.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Advanced React
+                                        Design</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-slate-300 dark:bg-slate-700" style="width: 0%">
+                                                </div>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-900 dark:text-white">0%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="px-2.5 py-1 text-[10px] font-black uppercase rounded bg-slate-100 text-slate-500 border border-slate-200">Yet
+                                            to Start</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">3 days ago</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-slate-400 hover:text-primary"><span
+                                                class="material-symbols-outlined">more_vert</span></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 4 -->
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-xs">
+                                                EL</div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-900 dark:text-white">Emily Lawson
+                                                </p>
+                                                <p class="text-xs text-slate-500">e.lawson@design.co</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">UI/UX Principles
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary" style="width: 82%"></div>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-900 dark:text-white">82%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="px-2.5 py-1 text-[10px] font-black uppercase rounded bg-primary/10 text-primary border border-primary/20">In
+                                            Progress</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-slate-500">Just now</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-slate-400 hover:text-primary"><span
+                                                class="material-symbols-outlined">more_vert</span></button>
+                                    </td>
+                                </tr>
+                                <!-- Row 5 -->
+                                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-6 py-4 border-b-0">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-xs">
+                                                MA</div>
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-900 dark:text-white">Michael
+                                                    Adams</p>
+                                                <p class="text-xs text-slate-500">m.adams@global.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 border-b-0">Data
+                                        Structures 101</td>
+                                    <td class="px-6 py-4 border-b-0">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div class="h-full bg-success-teal" style="width: 100%"></div>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-900 dark:text-white">100%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 border-b-0">
+                                        <span
+                                            class="px-2.5 py-1 text-[10px] font-black uppercase rounded bg-success-teal/10 text-success-teal border border-success-teal/20">Completed</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-xs text-slate-500 border-b-0">5 hours ago</td>
+                                    <td class="px-6 py-4 text-right border-b-0">
+                                        <button class="text-slate-400 hover:text-primary"><span
+                                                class="material-symbols-outlined">more_vert</span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div
+                        class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex items-center justify-between">
+                        <p class="text-xs text-slate-500">Showing <span class="font-bold">5</span> of <span
+                                class="font-bold">1,240</span> participants</p>
+                        <div class="flex gap-2">
+                            <button
+                                class="p-2 border border-slate-200 rounded-lg hover:bg-white text-slate-400 disabled:opacity-50"
+                                disabled="">
+                                <span class="material-symbols-outlined text-sm">chevron_left</span>
+                            </button>
+                            <button class="p-2 border border-slate-200 rounded-lg hover:bg-white text-slate-400">
+                                <span class="material-symbols-outlined text-sm">chevron_right</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
