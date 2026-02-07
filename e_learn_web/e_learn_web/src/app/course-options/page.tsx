@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function CourseOptions() {
     return (
@@ -22,12 +23,12 @@ export default function CourseOptions() {
                             <span className="material-symbols-outlined">dashboard</span>
                             <span className="text-sm font-medium">Dashboard</span>
                         </a>
-                        <a className="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg transition-colors" href="#">
+                        <Link className="flex items-center gap-3 px-3 py-2 bg-primary/10 text-primary rounded-lg transition-colors" href="/course-editor">
                             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
                                 book
                             </span>
                             <span className="text-sm font-medium">Courses</span>
-                        </a>
+                        </Link>
                     </nav>
                 </aside>
                 {/* Main Content Area */}

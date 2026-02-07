@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import './login.css';
 
 export default function LoginPage() {
@@ -74,8 +75,8 @@ export default function LoginPage() {
                 rememberMe: formData.rememberMe
             });
 
-            // After successful login, redirect to dashboard
-            // router.push('/dashboard');
+            // After successful login, redirect to admin courses
+            router.push('/admin-courses');
         } catch (error) {
             console.error('Login error:', error);
             setErrors({
@@ -180,9 +181,9 @@ export default function LoginPage() {
                             />
                             <span className="checkbox-text">Remember me</span>
                         </label>
-                        <a href="#" className="forgot-link">
+                        <Link href="/forgot-password" className="forgot-link">
                             Forgot password?
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Submit Button */}
@@ -206,9 +207,9 @@ export default function LoginPage() {
                 <div className="login-footer">
                     <p className="footer-text">
                         Don&apos;t have an account?{' '}
-                        <a href="#" className="footer-link">
+                        <Link href="/admin-signup" className="footer-link">
                             Sign up
-                        </a>
+                        </Link>
                     </p>
                 </div>
             </div>

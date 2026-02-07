@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function ReportingDashboard() {
     return (
@@ -23,10 +24,10 @@ export default function ReportingDashboard() {
                             <span className="material-symbols-outlined">analytics</span>
                             <span className="hidden lg:block font-medium">Reporting</span>
                         </a>
-                        <a className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" href="#">
+                        <Link className="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" href="/admin-courses">
                             <span className="material-symbols-outlined">book</span>
                             <span className="hidden lg:block font-medium">Courses</span>
-                        </a>
+                        </Link>
                     </nav>
                 </aside>
                 {/* Main Content */}

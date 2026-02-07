@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function QuizBuilder() {
     return (
@@ -21,7 +22,9 @@ export default function QuizBuilder() {
                         <span className="material-symbols-outlined text-[20px]">visibility</span>
                         Preview
                     </button>
-                    <button className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-90 shadow-sm">Save Quiz</button>
+                    <Link href="/course-quiz-list">
+                        <button className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-90 shadow-sm">Save Quiz</button>
+                    </Link>
                 </div>
             </header>
             <div className="flex flex-1 overflow-hidden h-[calc(100vh-64px)]">
