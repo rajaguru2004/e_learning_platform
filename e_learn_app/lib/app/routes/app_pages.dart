@@ -12,6 +12,11 @@ import '../modules/lesson_player/bindings/lesson_player_binding.dart';
 import '../modules/lesson_player/views/lesson_player_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/achievements/bindings/achievements_binding.dart';
+import '../modules/achievements/views/achievements_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
+import '../modules/library/views/library_view.dart';
 
 part 'app_routes.dart';
 
@@ -51,5 +56,16 @@ class AppPages {
       page: () => const LearningPathTransitionView(),
       binding: LearningPathTransitionBinding(),
     ),
+    GetPage(
+      name: _Paths.ACHIEVEMENTS,
+      page: () => const AchievementsView(),
+      binding: AchievementsBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
+    ),
+    GetPage(name: _Paths.LIBRARY, page: () => const LibraryView()),
   ];
 }

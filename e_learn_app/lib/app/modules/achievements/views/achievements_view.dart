@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../widgets/app_bottom_nav_bar.dart';
+import '../controllers/achievements_controller.dart';
 
-class AchievementsView extends StatelessWidget {
+class AchievementsView extends GetView<AchievementsController> {
   const AchievementsView({super.key});
 
   @override
@@ -17,32 +19,58 @@ class AchievementsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top App Bar
-            _buildTopAppBar(context, isDark, primaryColor),
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            // Scrollable Content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Profile & Progress Summary
-                    _buildProfileSection(isDark, primaryColor, rewardYellow),
+          if (controller.errorMessage.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: ${controller.errorMessage.value}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: controller.fetchEnrollments,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
 
-                    // Milestones Section
-                    _buildMilestonesSection(isDark, primaryColor, rewardYellow),
+          return Column(
+            children: [
+              // Top App Bar
+              _buildTopAppBar(context, isDark, primaryColor),
 
-                    const SizedBox(height: 100),
-                  ],
+              // Scrollable Content
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Profile & Progress Summary
+                      _buildProfileSection(isDark, primaryColor, rewardYellow),
+
+                      // Milestones Section
+                      _buildMilestonesSection(
+                        isDark,
+                        primaryColor,
+                        rewardYellow,
+                      ),
+
+                      const SizedBox(height: 100),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Bottom Action Button
-            _buildBottomAction(primaryColor),
-          ],
-        ),
+              // Bottom Action Button
+              _buildBottomAction(primaryColor),
+            ],
+          );
+        }),
       ),
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
@@ -101,6 +129,26 @@ class AchievementsView extends StatelessWidget {
     Color primaryColor,
     Color rewardYellow,
   ) {
+    final totalXp = controller.totalXp;
+
+    String rank = 'Aspirant';
+    int nextLevelXp = 500;
+    if (totalXp >= 10000) {
+      rank = 'Master';
+      nextLevelXp = 20000;
+    } else if (totalXp >= 5000) {
+      rank = 'Expert';
+      nextLevelXp = 10000;
+    } else if (totalXp >= 2000) {
+      rank = 'Specialist';
+      nextLevelXp = 5000;
+    } else if (totalXp >= 500) {
+      rank = 'Achiever';
+      nextLevelXp = 2000;
+    }
+
+    double progress = (totalXp / nextLevelXp).clamp(0.0, 1.0);
+
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -152,7 +200,7 @@ class AchievementsView extends StatelessWidget {
 
           // Name and Rank
           Text(
-            'Alex Johnson',
+            controller.profile.value?.data.user.name ?? 'Learner',
             style: GoogleFonts.lexend(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -162,7 +210,7 @@ class AchievementsView extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Current Rank: Achiever',
+            'Current Rank: $rank',
             style: GoogleFonts.lexend(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -201,7 +249,7 @@ class AchievementsView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'NEXT LEVEL: SPECIALIST',
+                      'NEXT LEVEL',
                       style: GoogleFonts.lexend(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -210,7 +258,7 @@ class AchievementsView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '1,250 / 2,000 XP',
+                      '$totalXp / $nextLevelXp XP',
                       style: GoogleFonts.lexend(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -223,7 +271,7 @@ class AchievementsView extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: LinearProgressIndicator(
-                    value: 0.625,
+                    value: progress,
                     backgroundColor: isDark
                         ? Colors.white.withOpacity(0.1)
                         : primaryColor.withOpacity(0.1),
@@ -243,7 +291,7 @@ class AchievementsView extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      '750 XP remaining to unlock Specialist status',
+                      '${nextLevelXp - totalXp} XP remaining to unlock next status',
                       style: GoogleFonts.lexend(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -267,6 +315,9 @@ class AchievementsView extends StatelessWidget {
     Color primaryColor,
     Color rewardYellow,
   ) {
+    final totalXp = controller.totalXp;
+    final completedCount = controller.completedCoursesCount;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -302,7 +353,9 @@ class AchievementsView extends StatelessWidget {
             icon: Icons.explore,
             title: 'Explorer',
             subtitle: 'Completed first course',
-            status: MilestoneStatus.completed,
+            status: completedCount >= 1
+                ? MilestoneStatus.completed
+                : MilestoneStatus.locked,
             rewardYellow: rewardYellow,
           ),
           const SizedBox(height: 16),
@@ -313,8 +366,12 @@ class AchievementsView extends StatelessWidget {
             primaryColor: primaryColor,
             icon: Icons.military_tech,
             title: 'Achiever',
-            subtitle: 'Consistent 7-day streak',
-            status: MilestoneStatus.current,
+            subtitle: 'Reach 500 XP',
+            status: totalXp >= 2000
+                ? MilestoneStatus.completed
+                : (totalXp >= 500
+                      ? MilestoneStatus.current
+                      : MilestoneStatus.locked),
             rewardYellow: rewardYellow,
           ),
           const SizedBox(height: 16),
@@ -326,7 +383,11 @@ class AchievementsView extends StatelessWidget {
             icon: Icons.psychology,
             title: 'Specialist',
             subtitle: 'Unlock at 2,000 XP',
-            status: MilestoneStatus.locked,
+            status: totalXp >= 5000
+                ? MilestoneStatus.completed
+                : (totalXp >= 2000
+                      ? MilestoneStatus.current
+                      : MilestoneStatus.locked),
             rewardYellow: rewardYellow,
           ),
           const SizedBox(height: 16),
@@ -338,7 +399,11 @@ class AchievementsView extends StatelessWidget {
             icon: Icons.workspace_premium,
             title: 'Expert',
             subtitle: 'Unlock at 5,000 XP',
-            status: MilestoneStatus.locked,
+            status: totalXp >= 10000
+                ? MilestoneStatus.completed
+                : (totalXp >= 5000
+                      ? MilestoneStatus.current
+                      : MilestoneStatus.locked),
             rewardYellow: rewardYellow,
           ),
           const SizedBox(height: 16),
@@ -350,7 +415,9 @@ class AchievementsView extends StatelessWidget {
             icon: Icons.diamond,
             title: 'Master',
             subtitle: 'Unlock at 10,000 XP',
-            status: MilestoneStatus.locked,
+            status: totalXp >= 10000
+                ? MilestoneStatus.current
+                : MilestoneStatus.locked,
             rewardYellow: rewardYellow,
           ),
         ],

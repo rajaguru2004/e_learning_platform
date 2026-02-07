@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../data/models/enrollment_model.dart';
 import '../../../widgets/app_bottom_nav_bar.dart';
+import '../controllers/profile_controller.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
 
   @override
@@ -10,33 +13,61 @@ class ProfileView extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
       body: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildLearningSummary(),
-                _buildPointsBadgesCard(),
-                _buildEffortScoreCard(),
-                _buildRecentActivity(),
-                _buildActionLinks(),
-              ],
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (controller.errorMessage.isNotEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Error: ${controller.errorMessage.value}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: controller.fetchProfile,
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final data = controller.profile.value?.data;
+          if (data == null) {
+            return const Center(child: Text('No profile data found'));
+          }
+
+          return SizedBox(
+            width: double.infinity,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildHeader(context, data),
+                  _buildLearningSummary(data),
+                  _buildPointsBadgesCard(data),
+                  _buildEffortScoreCard(data),
+                  _buildRecentActivity(controller.recentEnrollments),
+                  _buildActionLinks(),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        }),
       ),
       bottomNavigationBar: const AppBottomNavBar(currentIndex: 3),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, data) {
+    final user = data.user;
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [const Color(0xFF1F3D89), const Color(0xFF2E5CB8)],
+          colors: [Color(0xFF1F3D89), Color(0xFF2E5CB8)],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(24),
@@ -173,7 +204,7 @@ class ProfileView extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Alex Johnson',
+                      user.name,
                       style: GoogleFonts.lexend(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -195,7 +226,7 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'ACTIVE LEARNER',
+                        user.role.name.toUpperCase(),
                         style: GoogleFonts.lexend(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -214,7 +245,8 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildLearningSummary() {
+  Widget _buildLearningSummary(data) {
+    final stats = data.stats;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Container(
@@ -234,11 +266,11 @@ class ProfileView extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildStat('12', 'Enrolled'),
+            _buildStat(stats.enrolled.toString(), 'Enrolled'),
             Container(width: 1, height: 40, color: Colors.grey[100]),
-            _buildStat('8', 'Completed'),
+            _buildStat(stats.completed.toString(), 'Completed'),
             Container(width: 1, height: 40, color: Colors.grey[100]),
-            _buildStat('4', 'In Progress'),
+            _buildStat(stats.inProgress.toString(), 'In Progress'),
           ],
         ),
       ),
@@ -266,7 +298,20 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildPointsBadgesCard() {
+  Widget _buildPointsBadgesCard(data) {
+    final stats = data.stats;
+    final currentBadge = stats.currentBadge;
+    final nextBadge = stats.nextBadge;
+
+    double progress = 0;
+    if (nextBadge != null && currentBadge != null) {
+      int totalNeeded = nextBadge.minPoints - currentBadge.minPoints;
+      int currentInLevel = stats.totalPoints - currentBadge.minPoints;
+      progress = (currentInLevel / totalNeeded).clamp(0.0, 1.0);
+    } else if (nextBadge != null) {
+      progress = (stats.totalPoints / nextBadge.minPoints).clamp(0.0, 1.0);
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Container(
@@ -317,7 +362,7 @@ class ProfileView extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '2,450 pts',
+                          '${stats.totalPoints} pts',
                           style: GoogleFonts.lexend(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -341,7 +386,7 @@ class ProfileView extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Gold Scholar',
+                      currentBadge?.name ?? 'Beginner',
                       style: GoogleFonts.lexend(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -352,57 +397,59 @@ class ProfileView extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Next Level: Platinum',
-                      style: GoogleFonts.lexend(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
+            if (nextBadge != null)
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Next Level: ${nextBadge.name}',
+                        style: GoogleFonts.lexend(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '80%',
-                      style: GoogleFonts.lexend(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF2EC4B6),
+                      Text(
+                        '${(progress * 100).toInt()}%',
+                        style: GoogleFonts.lexend(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF2EC4B6),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: 0.8,
-                    backgroundColor: Colors.grey[100],
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Color(0xFF2EC4B6),
-                    ),
-                    minHeight: 8,
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '150 points to go until your next achievement!',
-                  style: GoogleFonts.lexend(
-                    fontSize: 10,
-                    color: Colors.grey[400],
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.grey[100],
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFF2EC4B6),
+                      ),
+                      minHeight: 8,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${nextBadge.pointsNeeded} points to go until your next achievement!',
+                    style: GoogleFonts.lexend(
+                      fontSize: 10,
+                      color: Colors.grey[400],
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEffortScoreCard() {
+  Widget _buildEffortScoreCard(data) {
+    final stats = data.stats;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Container(
@@ -431,7 +478,7 @@ class ProfileView extends StatelessWidget {
                     alignment: Alignment.center,
                     children: [
                       CircularProgressIndicator(
-                        value: 0.94,
+                        value: stats.weeklyEffortScore / 100.0,
                         strokeWidth: 4,
                         backgroundColor: const Color(
                           0xFFF4C32F,
@@ -441,7 +488,7 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '94%',
+                        '${stats.weeklyEffortScore}%',
                         style: GoogleFonts.lexend(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -463,7 +510,9 @@ class ProfileView extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'You\'re in the top 5% this week!',
+                      stats.weeklyEffortScore > 0
+                          ? 'Great progress this week!'
+                          : 'Start learning to increase your score!',
                       style: GoogleFonts.lexend(
                         fontSize: 10,
                         color: Colors.grey[500],
@@ -480,7 +529,9 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentActivity() {
+  Widget _buildRecentActivity(List<Enrollment> enrollments) {
+    if (enrollments.isEmpty) return const SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -497,16 +548,16 @@ class ProfileView extends StatelessWidget {
               ),
             ),
           ),
-          _buildActivityItem(
-            'Advanced UI Design',
-            0.8,
-            'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400',
-          ),
-          const SizedBox(height: 12),
-          _buildActivityItem(
-            'React Fundamentals',
-            0.45,
-            'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400',
+          ...enrollments.map(
+            (e) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildActivityItem(
+                e.course.title,
+                e.progressPercent / 100.0,
+                e.course.thumbnailUrl ??
+                    'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400',
+              ),
+            ),
           ),
         ],
       ),

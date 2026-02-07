@@ -35,6 +35,11 @@ class CourseDetailController extends GetxController {
   }
 
   void enroll() {
+    if (course.value?.isEnrolled ?? false) {
+      Get.toNamed('/lesson-player', arguments: course.value?.id);
+      return;
+    }
+
     // Implement enrollment logic here
     Get.snackbar(
       'Enrollment',
