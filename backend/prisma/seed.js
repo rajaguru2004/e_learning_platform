@@ -786,6 +786,11 @@ async function main() {
             where: { key: 'COURSE_ENROLLMENT_NOTIFICATION' },
             update: {},
             create: { key: 'COURSE_ENROLLMENT_NOTIFICATION', value: 'true', dataType: 'BOOLEAN', module: 'COURSE', description: 'Send notifications on course enrollment' }
+        }),
+        prisma.systemSetting.upsert({
+            where: { key: 'PAYMENT_ENABLED' },
+            update: {},
+            create: { key: 'PAYMENT_ENABLED', value: 'true', dataType: 'BOOLEAN', module: 'PAYMENT', description: 'Enable payment functionality on the platform' }
         })
     ]);
     console.log('✅ System settings seeded\n');

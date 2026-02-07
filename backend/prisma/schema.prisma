@@ -15,39 +15,39 @@ datasource db {
 // ============================================================================
 
 model Role {
-  id            String           @id @default(uuid())
-  code          String           @unique // ADMIN, INSTRUCTOR, LEARNER, etc.
-  name          String
-  description   String?
-  isSystemRole  Boolean          @default(false) @map("is_system_role")
-  isActive      Boolean          @default(true) @map("is_active")
-  createdAt     DateTime         @default(now()) @map("created_at")
-  
+  id           String   @id @default(uuid())
+  code         String   @unique // ADMIN, INSTRUCTOR, LEARNER, etc.
+  name         String
+  description  String?
+  isSystemRole Boolean  @default(false) @map("is_system_role")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
   rolePermissions RolePermission[]
   users           User[]
-  
+
   @@map("roles")
 }
 
 model Permission {
   id          String   @id @default(uuid())
   code        String   @unique // CREATE_COURSE, EDIT_COURSE, PUBLISH_COURSE, etc.
-  module      String   // COURSE, QUIZ, REPORTING, USER, etc.
+  module      String // COURSE, QUIZ, REPORTING, USER, etc.
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   rolePermissions RolePermission[]
-  
+
   @@map("permissions")
 }
 
 model RolePermission {
   roleId       String @map("role_id")
   permissionId String @map("permission_id")
-  
+
   role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
   permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  
+
   @@id([roleId, permissionId])
   @@map("role_permissions")
 }
@@ -62,7 +62,7 @@ model CourseVisibilityType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("course_visibility_types")
 }
 
@@ -74,7 +74,7 @@ model CourseAccessType {
   description        String?
   isActive           Boolean  @default(true) @map("is_active")
   createdAt          DateTime @default(now()) @map("created_at")
-  
+
   @@map("course_access_types")
 }
 
@@ -84,21 +84,21 @@ model CourseStatusType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("course_status_types")
 }
 
 model CourseCategory {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   name      String
-  slug      String    @unique
-  parentId  String?   @map("parent_id")
-  isActive  Boolean   @default(true) @map("is_active")
-  createdAt DateTime  @default(now()) @map("created_at")
-  
+  slug      String   @unique
+  parentId  String?  @map("parent_id")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
   parent   CourseCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children CourseCategory[] @relation("CategoryHierarchy")
-  
+
   @@map("course_categories")
 }
 
@@ -108,7 +108,7 @@ model CourseTagMaster {
   slug      String   @unique
   isActive  Boolean  @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
-  
+
   @@map("course_tags_master")
 }
 
@@ -126,7 +126,7 @@ model LessonType {
   description      String?
   isActive         Boolean  @default(true) @map("is_active")
   createdAt        DateTime @default(now()) @map("created_at")
-  
+
   @@map("lesson_types")
 }
 
@@ -137,17 +137,17 @@ model AttachmentType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("attachment_types")
 }
 
 model MediaProvider {
-  id              String   @id @default(uuid())
-  name            String   @unique // YOUTUBE, VIMEO, AWS_S3, GOOGLE_DRIVE
-  embedSupported  Boolean  @default(false) @map("embed_supported")
-  isActive        Boolean  @default(true) @map("is_active")
-  createdAt       DateTime @default(now()) @map("created_at")
-  
+  id             String   @id @default(uuid())
+  name           String   @unique // YOUTUBE, VIMEO, AWS_S3, GOOGLE_DRIVE
+  embedSupported Boolean  @default(false) @map("embed_supported")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+
   @@map("media_providers")
 }
 
@@ -161,7 +161,7 @@ model EnrollmentStatusType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("enrollment_status_types")
 }
 
@@ -171,7 +171,7 @@ model ProgressStatusType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("progress_status_types")
 }
 
@@ -181,7 +181,7 @@ model PaymentStatusType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("payment_status_types")
 }
 
@@ -191,7 +191,7 @@ model AccessDurationType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("access_duration_types")
 }
 
@@ -207,32 +207,32 @@ model QuestionType {
   description   String?
   isActive      Boolean  @default(true) @map("is_active")
   createdAt     DateTime @default(now()) @map("created_at")
-  
+
   @@map("question_types")
 }
 
 model AttemptRewardPolicy {
-  id         String   @id @default(uuid())
-  quizId     String?  @map("quiz_id") // Nullable for global default policies
-  attemptFrom Int     @map("attempt_from")
-  attemptTo   Int?    @map("attempt_to") // NULL means "and above"
+  id          String   @id @default(uuid())
+  quizId      String?  @map("quiz_id") // Nullable for global default policies
+  attemptFrom Int      @map("attempt_from")
+  attemptTo   Int?     @map("attempt_to") // NULL means "and above"
   points      Int
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("attempt_reward_policies")
 }
 
 model GradingPolicy {
-  id                      String   @id @default(uuid())
-  name                    String
-  passPercentage          Int      @map("pass_percentage") // 0-100
-  maxAttempts             Int?     @map("max_attempts") // NULL means unlimited
-  allowRetryImmediately   Boolean  @default(true) @map("allow_retry_immediately")
-  description             String?
-  isActive                Boolean  @default(true) @map("is_active")
-  createdAt               DateTime @default(now()) @map("created_at")
-  
+  id                    String   @id @default(uuid())
+  name                  String
+  passPercentage        Int      @map("pass_percentage") // 0-100
+  maxAttempts           Int?     @map("max_attempts") // NULL means unlimited
+  allowRetryImmediately Boolean  @default(true) @map("allow_retry_immediately")
+  description           String?
+  isActive              Boolean  @default(true) @map("is_active")
+  createdAt             DateTime @default(now()) @map("created_at")
+
   @@map("grading_policies")
 }
 
@@ -250,7 +250,7 @@ model BadgeType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("badge_types")
 }
 
@@ -261,21 +261,21 @@ model PointSource {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("point_sources")
 }
 
 model AchievementRule {
-  id              String   @id @default(uuid())
-  name            String
-  ruleType        String   @map("rule_type") // POINT_BASED, COURSE_COUNT, QUIZ_PERFECT_SCORE
-  thresholdValue  Int      @map("threshold_value")
-  rewardPoints    Int?     @map("reward_points")
-  badgeId         String?  @map("badge_id") // Optional badge to award
-  description     String?
-  isActive        Boolean  @default(true) @map("is_active")
-  createdAt       DateTime @default(now()) @map("created_at")
-  
+  id             String   @id @default(uuid())
+  name           String
+  ruleType       String   @map("rule_type") // POINT_BASED, COURSE_COUNT, QUIZ_PERFECT_SCORE
+  thresholdValue Int      @map("threshold_value")
+  rewardPoints   Int?     @map("reward_points")
+  badgeId        String?  @map("badge_id") // Optional badge to award
+  description    String?
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+
   @@map("achievement_rules")
 }
 
@@ -288,7 +288,7 @@ model RatingScale {
   value       Int      @unique // 1, 2, 3, 4, 5
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("rating_scales")
 }
 
@@ -298,7 +298,7 @@ model ReviewStatusType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("review_status_types")
 }
 
@@ -313,7 +313,7 @@ model ReportType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("report_types")
 }
 
@@ -323,7 +323,7 @@ model TimeGranularityType {
   description String?
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
-  
+
   @@map("time_granularity_types")
 }
 
@@ -336,11 +336,11 @@ model SystemSetting {
   key         String   @unique
   value       String
   dataType    String   @map("data_type") // STRING, NUMBER, BOOLEAN, JSON
-  module      String   // COURSE, QUIZ, UPLOAD, VIDEO, etc.
+  module      String // COURSE, QUIZ, UPLOAD, VIDEO, etc.
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-  
+
   @@map("system_settings")
 }
 
@@ -354,10 +354,203 @@ model User {
   email     String   @unique
   password  String
   roleId    String   @map("role_id")
+  isActive  Boolean  @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  
-  role Role @relation(fields: [roleId], references: [id])
-  
+
+  role           Role             @relation(fields: [roleId], references: [id])
+  coursesCreated Course[]         @relation("InstructorCourses")
+  enrollments    Enrollment[]
+  courseProgress CourseProgress[]
+  pointsLedger   PointsLedger[]
+  courseReviews  CourseReview[]
+  payments       Payment[]
+
+  @@index([roleId])
+  @@index([isActive])
+  @@index([createdAt])
   @@map("users")
+}
+
+// ============================================================================
+// 10️⃣ COURSE MANAGEMENT DOMAIN
+// ============================================================================
+
+model Course {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  description     String?  @db.Text
+  instructorId    String   @map("instructor_id")
+  categoryId      String?  @map("category_id")
+  statusCode      String   @map("status_code") // DRAFT, PUBLISHED, ARCHIVED
+  visibilityCode  String?  @map("visibility_code") // EVERYONE, SIGNED_IN, PRIVATE
+  accessCode      String?  @map("access_code") // OPEN, PAYMENT, SUBSCRIPTION
+  thumbnailUrl    String?  @map("thumbnail_url")
+  price           Decimal? @db.Decimal(10, 2)
+  discountedPrice Decimal? @map("discounted_price") @db.Decimal(10, 2)
+  duration        Int? // Total duration in minutes
+  enrollmentCount Int      @default(0) @map("enrollment_count")
+  averageRating   Decimal? @default(0) @map("average_rating") @db.Decimal(3, 2)
+  totalReviews    Int      @default(0) @map("total_reviews")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  instructor  User           @relation("InstructorCourses", fields: [instructorId], references: [id])
+  enrollments Enrollment[]
+  reviews     CourseReview[]
+
+  @@index([instructorId])
+  @@index([statusCode])
+  @@index([visibilityCode])
+  @@index([accessCode])
+  @@index([isActive])
+  @@index([createdAt])
+  @@index([averageRating])
+  @@map("courses")
+}
+
+// ============================================================================
+// 11️⃣ ENROLLMENT DOMAIN
+// ============================================================================
+
+model Enrollment {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  courseId        String    @map("course_id")
+  statusCode      String    @map("status_code") // INVITED, ENROLLED, STARTED, COMPLETED, DROPPED
+  enrolledAt      DateTime  @default(now()) @map("enrolled_at")
+  completedAt     DateTime? @map("completed_at")
+  droppedAt       DateTime? @map("dropped_at")
+  expiresAt       DateTime? @map("expires_at")
+  progressPercent Int       @default(0) @map("progress_percent") // 0-100
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user           User             @relation(fields: [userId], references: [id])
+  course         Course           @relation(fields: [courseId], references: [id])
+  courseProgress CourseProgress[]
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([statusCode])
+  @@index([enrolledAt])
+  @@index([isActive])
+  @@map("enrollments")
+}
+
+// ============================================================================
+// 12️⃣ PROGRESS TRACKING DOMAIN
+// ============================================================================
+
+model CourseProgress {
+  id               String    @id @default(uuid())
+  userId           String    @map("user_id")
+  enrollmentId     String    @map("enrollment_id")
+  lessonId         String?   @map("lesson_id") // Reference to lesson (not in schema yet)
+  statusCode       String    @map("status_code") // NOT_STARTED, IN_PROGRESS, COMPLETED
+  progressPercent  Int       @default(0) @map("progress_percent") // 0-100
+  timeSpentSeconds Int       @default(0) @map("time_spent_seconds")
+  completedAt      DateTime? @map("completed_at")
+  lastAccessedAt   DateTime  @default(now()) @map("last_accessed_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  user       User       @relation(fields: [userId], references: [id])
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+
+  @@index([userId])
+  @@index([enrollmentId])
+  @@index([statusCode])
+  @@index([progressPercent])
+  @@index([lastAccessedAt])
+  @@map("course_progress")
+}
+
+// ============================================================================
+// 13️⃣ GAMIFICATION - POINTS LEDGER DOMAIN
+// ============================================================================
+
+model PointsLedger {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  sourceCode    String   @map("source_code") // QUIZ_COMPLETION, COURSE_COMPLETION, BONUS, etc.
+  points        Int
+  description   String?
+  referenceId   String?  @map("reference_id") // ID of quiz, course, etc.
+  referenceType String?  @map("reference_type") // QUIZ, COURSE, MANUAL, etc.
+  awardedBy     String?  @map("awarded_by") // Admin user ID if manually awarded
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([sourceCode])
+  @@index([createdAt])
+  @@index([referenceId, referenceType])
+  @@map("points_ledger")
+}
+
+// ============================================================================
+// 14️⃣ REVIEW & RATING DOMAIN
+// ============================================================================
+
+model CourseReview {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  courseId    String    @map("course_id")
+  rating      Int // 1-5
+  reviewText  String?   @map("review_text") @db.Text
+  statusCode  String    @default("PENDING_APPROVAL") @map("status_code") // PENDING_APPROVAL, APPROVED, REJECTED
+  isPublished Boolean   @default(false) @map("is_published")
+  approvedBy  String?   @map("approved_by") // Admin user ID
+  approvedAt  DateTime? @map("approved_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([rating])
+  @@index([statusCode])
+  @@index([isPublished])
+  @@index([createdAt])
+  @@map("course_reviews")
+}
+
+// ============================================================================
+// 15️⃣ PAYMENT & TRANSACTION DOMAIN
+// ============================================================================
+
+model Payment {
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  courseId       String?   @map("course_id") // Nullable for subscription payments
+  amount         Decimal   @db.Decimal(10, 2)
+  currency       String    @default("USD")
+  statusCode     String    @map("status_code") // PENDING, SUCCESS, FAILED, REFUNDED
+  paymentMethod  String?   @map("payment_method") // CARD, UPI, WALLET, etc.
+  transactionId  String?   @unique @map("transaction_id") // External payment gateway transaction ID
+  paymentGateway String?   @map("payment_gateway") // STRIPE, RAZORPAY, etc.
+  failureReason  String?   @map("failure_reason") @db.Text
+  refundedAmount Decimal?  @map("refunded_amount") @db.Decimal(10, 2)
+  refundedAt     DateTime? @map("refunded_at")
+  metadata       Json? // Store additional payment metadata
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([statusCode])
+  @@index([createdAt])
+  @@index([paymentGateway])
+  @@map("payments")
 }
