@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const learnerController = require('../Controllers/learner.controller');
-const { verifyToken, requireRole } = require('../Middlewares/auth.middleware');
+const { verifyToken, requireRole, optionalVerifyToken } = require('../Middlewares/auth.middleware');
 
 /**
  * Learner Routes
@@ -28,7 +28,7 @@ router.get('/courses/search', learnerController.searchCourses);
  * @desc    Get course details by ID
  * @access  Public (enrollment status requires auth)
  */
-router.get('/courses/:id', learnerController.getCourseDetails);
+router.get('/courses/:id', optionalVerifyToken, learnerController.getCourseDetails);
 
 /**
  * @route   GET /api/learner/courses
