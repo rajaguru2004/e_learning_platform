@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/course_completion/bindings/course_completion_binding.dart';
+import '../modules/course_completion/views/course_completion_view.dart';
 import '../modules/course_detail/bindings/course_detail_binding.dart';
 import '../modules/course_detail/views/course_detail_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -36,6 +38,11 @@ class AppPages {
       name: _Paths.LESSON_PLAYER,
       page: () => const LessonPlayerView(),
       binding: LessonPlayerBinding(),
+    ),
+    GetPage(
+      name: _Paths.COURSE_COMPLETION,
+      page: () => const CourseCompletionView(),
+      binding: CourseCompletionBinding(),
     ),
   ];
 }

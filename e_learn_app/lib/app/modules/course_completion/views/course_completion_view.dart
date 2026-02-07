@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../controllers/course_completion_controller.dart';
 
-class CourseCompletionView extends StatelessWidget {
+class CourseCompletionView extends GetView<CourseCompletionController> {
   const CourseCompletionView({super.key});
 
   @override
@@ -325,7 +326,7 @@ class CourseCompletionView extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => Get.back(),
+                      onPressed: controller.returnToCourses,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1F3D89),
                         foregroundColor: Colors.white,
@@ -360,9 +361,7 @@ class CourseCompletionView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton.icon(
-                        onPressed: () {
-                          // Share achievement
-                        },
+                        onPressed: controller.shareAchievement,
                         icon: const Icon(
                           Icons.share,
                           color: Color(0xFF1F3D89),
@@ -378,9 +377,7 @@ class CourseCompletionView extends StatelessWidget {
                         ),
                       ),
                       TextButton.icon(
-                        onPressed: () {
-                          // Download certificate
-                        },
+                        onPressed: controller.downloadCertificate,
                         icon: const Icon(
                           Icons.download,
                           color: Color(0xFF1F3D89),
