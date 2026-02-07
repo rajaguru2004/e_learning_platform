@@ -502,35 +502,80 @@ class CourseDetailView extends GetView<CourseDetailController> {
       ),
       child: SafeArea(
         top: false,
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => Get.toNamed('/lesson-player'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1F3D89),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 4,
-              shadowColor: const Color(0xFF1F3D89).withOpacity(0.2),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Continue Lesson 03',
-                  style: GoogleFonts.lexend(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  Get.snackbar(
+                    'Quiz',
+                    'Quiz module coming soon!',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: const Color(0xFF1F3D89),
+                    colorText: Colors.white,
+                    margin: const EdgeInsets.all(16),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF1F3D89),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(
+                      color: Color(0xFF1F3D89),
+                      width: 1.5,
+                    ),
                   ),
+                  elevation: 0,
                 ),
-                const SizedBox(width: 8),
-                const Icon(Icons.arrow_forward, size: 20),
-              ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.quiz_outlined, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Quiz',
+                      style: GoogleFonts.lexend(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => Get.toNamed('/lesson-player'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1F3D89),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                  shadowColor: const Color(0xFF1F3D89).withOpacity(0.2),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Continue',
+                      style: GoogleFonts.lexend(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward, size: 20),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
