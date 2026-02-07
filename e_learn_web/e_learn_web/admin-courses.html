@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>eLearning Courses Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f3d89",
+                        "accent-success": "#2EC4B6",
+                        "text-main": "#2E2E2E",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#13161f",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: rgba(31, 61, 137, 0.1);
+            color: #1f3d89;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-gray-200">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 flex-shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark flex flex-col">
+            <div class="p-6 flex items-center gap-3">
+                <div class="bg-primary rounded-lg p-1.5 text-white">
+                    <span class="material-symbols-outlined text-2xl">school</span>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-primary dark:text-white text-lg font-bold leading-none">EduFlow</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Admin Portal</p>
+                </div>
+            </div>
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg active-nav" href="#">
+                    <span class="material-symbols-outlined">book_4</span>
+                    <span class="text-sm font-medium">Courses</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span class="text-sm font-medium">Reports</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="text-sm font-medium">Settings</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-100 dark:border-gray-800">
+                <div class="flex items-center gap-3 px-2">
+                    <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700 bg-cover bg-center" data-alt="User profile avatar circle" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA0l1x2nyydUzPm75eVgUXp8care3EKVbTpcVf__MOKVhqiS5dZvx6nBhGmscYX_UTSIuG0lg6EP79y8S0Md4oJmYZHEeqFHT0XsNdVxx1BRLS1JyxV3ArFyNuzxJn-g3h0g7TsbgKFV67A5JadkPcYDSvz0ieU72Roz8kFakcvWxxG7AobmtlVDqhc72qsrj5Dxq5lG5AOFKlw17nKX1RlIAJWbmeT1TzxSpYue2T-ASHhq9i-zYSG68fIjYDZEujA-lIdl6xCqOwR')"></div>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-sm font-semibold truncate">Alex Johnson</p>
+                        <p class="text-xs text-gray-500 truncate">Senior Admin</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600">
+                        <span class="material-symbols-outlined text-xl">logout</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-w-0 bg-[#F8F9FB] dark:bg-background-dark/50 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white dark:bg-background-dark border-b border-gray-200 dark:border-gray-800 px-8 py-4 sticky top-0 z-10">
+                <div class="flex items-center justify-between gap-4 max-w-7xl mx-auto">
+                    <div class="flex items-center gap-6 flex-1">
+                        <h2 class="text-2xl font-bold text-text-main dark:text-white">Courses</h2>
+                        <div class="relative max-w-md w-full">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+                            <input class="w-full bg-gray-100 dark:bg-gray-800 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/30 transition-shadow" placeholder="Search courses by name or ID..." type="text"/>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg font-semibold text-sm transition-all shadow-md shadow-primary/20">
+                            <span class="material-symbols-outlined text-xl">add_circle</span>
+                            <span>Create Course</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- Sub Header: Controls -->
+            <div class="px-8 py-6 max-w-7xl mx-auto w-full">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3 bg-gray-200/50 dark:bg-gray-800 p-1 rounded-xl">
+                        <button class="flex items-center gap-2 px-4 py-1.5 bg-white dark:bg-gray-700 rounded-lg shadow-sm text-sm font-semibold text-primary dark:text-white">
+                            <span class="material-symbols-outlined text-lg">grid_view</span>
+                            <span>Kanban</span>
+                        </button>
+                        <button class="flex items-center gap-2 px-4 py-1.5 text-gray-500 dark:text-gray-400 text-sm font-medium hover:text-gray-700">
+                            <span class="material-symbols-outlined text-lg">view_list</span>
+                            <span>List</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                        <span>Sort by:</span>
+                        <select class="bg-transparent border-none focus:ring-0 text-primary dark:text-gray-300 font-semibold cursor-pointer py-0">
+                            <option>Last Modified</option>
+                            <option>Alphabetical</option>
+                            <option>Course Status</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Course Grid (Kanban View) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Card 1 -->
+                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div class="h-32 bg-gray-200 dark:bg-gray-700 bg-cover bg-center relative" data-alt="UX design interface preview pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbT7DZWKuM3i3rx_BZh-CV51IcOUe1cPK0qTb_UaLFjt0_QT-F9fy5jJ42HR6HqzgNbJDRGYBYTlzmxV7hZ1LmNRKfnt3lUq3xALJ8vs7DfryMgvJBMUH6ENQbI0sMQyD1BodTO4MMCdS4mo7kYbNItmo-SaGFBUTxvNIjbb9dVQ2SELOMj9VG0OuhORi2S35GhLlQFSEBF6v5VWtRJSCgvmXJNgeNd-qCdFOVgsFSIhq6BwjYVzEbImZRKPXnaHkeDDSqhGcFD350')">
+                            <div class="absolute top-3 right-3">
+                                <button class="size-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center text-gray-600 hover:text-primary transition-colors shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">more_vert</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-3">
+                                <span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded-md">Design</span>
+                                <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 text-[10px] font-bold uppercase rounded-md">Beginner</span>
+                            </div>
+                            <h3 class="text-text-main dark:text-white font-semibold text-lg leading-tight mb-4 line-clamp-2">Introduction to UI/UX Design Principles</h3>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-5">
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">menu_book</span>
+                                    <span>12 Lessons</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    <span>4h 30m</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between border-t border-gray-50 dark:border-gray-700 pt-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-accent-success shadow-[0_0_8px_rgba(46,196,182,0.4)]"></div>
+                                    <span class="text-xs font-bold text-accent-success uppercase tracking-wider">Published</span>
+                                </div>
+                                <div class="flex -space-x-2">
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-300 bg-cover" data-alt="Student avatar placeholder 1" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuASbpT5mDRW8tAHDNP30nKtT8f8w8vNEXx5mnufR-4_AKwYM8VH0RekxnEP155zfyu3e0YAF_tQ6RY4TtEl9YIxthw77VT4ATARr3gSNjkOeVcgzFsrvyUSMMCo_lNPlk9cEwZBFqNL5HIZEaCE-MMLumzsP6q3kd-vS80SLBwEcQk2HlkK_agL2_hzyIQWnYWhdMQsExYYewuydGSFlNssjvo-M7USNSGuBUiyyhleUy0u3XHum79kflrmYpDvn0-yp5k5LS3dWjbL')"></div>
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-400 bg-cover" data-alt="Student avatar placeholder 2" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDbK-KGuijB6Gcl4bBU0QpF0d1PpJEHdXbkDQvohyBACOISKbuCrAkhyaOyc38HBJlPoSX0keIQJ7NYoKqPr4KzJK_T8OK4CkgMoR4gLSx7L3MPyTJfGnDBSyQls73yoK2eGVNIo9rGAEYDDxHgGrndwIntT_2hwerEqgWIb1NJEFxTmHJj0v_9QaTKooGB2WyMx-zix0wNypecKtZ4hdNdJG69LB9lRsTZE0pH6hR3Sr_lR0s8sh8-148ZSBPdkwwkIusWCxjZraUu')"></div>
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">+12</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div class="h-32 bg-gray-200 dark:bg-gray-700 bg-cover bg-center relative" data-alt="Business growth strategy concept pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCPAxFn7Nk8I60UH5aUC1Yx7QxImGd-rS6OimfpGbl9a7D5OH1OreI3oNaeMbj8e44ednEno7v2euKBo2kU09ArBi-zd5l4JzgH_YLDwHLB3BliJghyjxyGB3N5zRWWyxSyMVPSc6j6iBaQ9dkadoIxP_GOVyZqj1eaxK0hCrxgwajyCQg1B_K-VciYQ6wPsPhOH0wUq_InT-caxDvgUFtT1rUIRCxi41jmaNUxvjOoOqtJ_7GwjtCh94iirZrrpDIxQ-193dRtnnPg')">
+                            <div class="absolute top-3 right-3">
+                                <button class="size-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center text-gray-600 hover:text-primary transition-colors shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">more_vert</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-3">
+                                <span class="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold uppercase rounded-md">Business</span>
+                                <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 text-[10px] font-bold uppercase rounded-md">Advanced</span>
+                            </div>
+                            <h3 class="text-text-main dark:text-white font-semibold text-lg leading-tight mb-4 line-clamp-2">Business Management 101: Scale Your Startup</h3>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-5">
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">menu_book</span>
+                                    <span>8 Lessons</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    <span>6h 15m</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between border-t border-gray-50 dark:border-gray-700 pt-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-accent-success shadow-[0_0_8px_rgba(46,196,182,0.4)]"></div>
+                                    <span class="text-xs font-bold text-accent-success uppercase tracking-wider">Published</span>
+                                </div>
+                                <div class="flex -space-x-2">
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-300 bg-cover" data-alt="Student avatar placeholder 3" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAPsomfrigbTyUaX37k2X-Mt0lpMFmnrBby4ZnF8gf5Q6d4RrctC8ce7PIYOqXMnLLeZW9kxOi3g9dsyxJg6AAlWmJMJkpbSBixiHvbArGq6y5GpQabYJf984Wu0nzBRBnpuz3an3wobwKOt3egJZFaCRe4YT1idLdpJZQffI8QgEWJjbOPxNDIj5m-6mDKA1VcVdtkm-A1hpVk41I2tXhfnzvkvZNeN5W6LIBppKymFGo2UdfZIFWzUpoQEtdvW_MrOOHzpEMrdzxG')"></div>
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">+84</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 overflow-hidden opacity-90">
+                        <div class="h-32 bg-gray-200 dark:bg-gray-700 bg-cover bg-center relative" data-alt="Photography equipment and lens pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBai0I9SaXvPtVWe0KVsKif8GUv73sPguu-87ym_nXvB6Mi25DAw-m5VFb_9hQMB-BGB2fjeK4ZiECyGVArp3Kwqnt4HAYOJ3BVzdNrpgMdd6G0uuAbAdNcag6A1qFTgyX1gIIOgsyXRIN5wH9Yd9U1uLoQX68CS36pDtCS3BZU16k4LqBXWEffGgZ4foWqvMNaqlwQ5okpmsc1dktkuWEaDhMcNQ1luXgATwtlFt0tUQbDsTlHa0X9ZsySDF7TnGlyDj7KAv5s9c9U')">
+                            <div class="absolute top-3 right-3">
+                                <button class="size-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center text-gray-600 hover:text-primary transition-colors shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">more_vert</span>
+                                </button>
+                            </div>
+                            <div class="absolute inset-0 bg-black/10 backdrop-grayscale"></div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-3">
+                                <span class="px-2 py-0.5 bg-purple-100 text-purple-600 text-[10px] font-bold uppercase rounded-md">Art</span>
+                                <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 text-[10px] font-bold uppercase rounded-md">Pro</span>
+                            </div>
+                            <h3 class="text-text-main dark:text-white font-semibold text-lg leading-tight mb-4 line-clamp-2">Advanced Photography: Master the Light</h3>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-5">
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">menu_book</span>
+                                    <span>15 Lessons</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    <span>10h 00m</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between border-t border-gray-50 dark:border-gray-700 pt-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-gray-400 shadow-[0_0_8px_rgba(156,163,175,0.4)]"></div>
+                                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Offline</span>
+                                </div>
+                                <div class="text-[10px] font-semibold text-gray-400 italic">Draft saved 2d ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="group bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 overflow-hidden">
+                        <div class="h-32 bg-gray-200 dark:bg-gray-700 bg-cover bg-center relative" data-alt="Digital marketing analytics chart pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDgSPtKHXJ4viBiyHNxJXpQktnvcl0eimUtwa6TUGQO7OQlp_2myPZbUTH8_mBuBYtClIQec22PPm97aDQBhrkroH0tyZpQmOEjK3VxdWoyOm65MIdMVfCXfngWkj2cX5RTdqQMtcmdKYeRSfaMSCqKW03TZbDRPoiBjcLZGXU9QfKbKwUClvaDvF1DhyDqMmlJemQ0j0DDxkpkrpcMWNudEbjbjsi3DZ-_fZgW9XqrVidiwcJQdl7EFDDLL7Yul0bweOQL8cmnwFOJ')">
+                            <div class="absolute top-3 right-3">
+                                <button class="size-8 bg-white/90 dark:bg-gray-800/90 rounded-full flex items-center justify-center text-gray-600 hover:text-primary transition-colors shadow-sm">
+                                    <span class="material-symbols-outlined text-xl">more_vert</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex gap-2 mb-3">
+                                <span class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-bold uppercase rounded-md">Marketing</span>
+                                <span class="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 text-[10px] font-bold uppercase rounded-md">Expert</span>
+                            </div>
+                            <h3 class="text-text-main dark:text-white font-semibold text-lg leading-tight mb-4 line-clamp-2">Digital Marketing: Growth Hacking Strategies</h3>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-5">
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">menu_book</span>
+                                    <span>10 Lessons</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">schedule</span>
+                                    <span>5h 45m</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between border-t border-gray-50 dark:border-gray-700 pt-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="size-3 rounded-full bg-accent-success shadow-[0_0_8px_rgba(46,196,182,0.4)]"></div>
+                                    <span class="text-xs font-bold text-accent-success uppercase tracking-wider">Published</span>
+                                </div>
+                                <div class="flex -space-x-2">
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-300 bg-cover" data-alt="Student avatar placeholder 4" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKdYa95JCj8HLVHxhj5cESTUNc5J25XXS14EohVtWgVo9TfwV0xM8j9gc6L-ViT2SoTUZya-b44EnNZFfWVtteVhTySBujecduo9ulmwc8Sy6b9HFfaY_Gi0zzEZ_mKYQhD9YBjaYIc9_eT1oTvLqT8cRFCyx2I9RXgoadk9CWZE6zVzNKHdvGzL70RcUILFI15rq3HHSYLsNzM2Cwkj3jRMDbrHdqcqaJkTtb0xlIYttMfj103bt2pdqThv6rZQqoTF6M8f6I5ckS')"></div>
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-gray-500 bg-cover" data-alt="Student avatar placeholder 5" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBsmBXbhWNznWK9BcgqAkhHPBeO-THJudkst9oR9S9rpG6JVyD1QHOX9QWZu5AhrBHgQIaYTmYJlBCTJ738aIshCgFGon6SjYCLufnBJO8QpmiaFi2Bx8VWujKI5lLJgxEDg7rOWSv8qxmQ0Yks00ySUNpU6XsvtA7zy_vsW-xnwq_f9MxXE3-SnU7nW7E7EFhLuB8kFqtIVcJng1yZTY1XDmnGhuxMcTP1YD7Y2QTNds6bGtiOx_udvjopJCc7nNYpYyM_40fhyh0S')"></div>
+                                    <div class="size-6 rounded-full border-2 border-white dark:border-gray-800 bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">+200</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- New Course Placeholder -->
+                    <button class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl h-full p-8 group hover:border-primary transition-colors min-h-[300px]">
+                        <div class="size-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-primary/10 transition-colors mb-4">
+                            <span class="material-symbols-outlined text-gray-400 group-hover:text-primary text-3xl">add</span>
+                        </div>
+                        <span class="text-sm font-semibold text-gray-500 group-hover:text-primary">Create New Course</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
