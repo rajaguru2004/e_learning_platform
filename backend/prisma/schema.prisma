@@ -10,17 +10,354 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
+// ============================================================================
+// 1️⃣ IDENTITY & AUTHORIZATION DOMAIN
+// ============================================================================
+
+model Role {
+  id            String           @id @default(uuid())
+  code          String           @unique // ADMIN, INSTRUCTOR, LEARNER, etc.
+  name          String
+  description   String?
+  isSystemRole  Boolean          @default(false) @map("is_system_role")
+  isActive      Boolean          @default(true) @map("is_active")
+  createdAt     DateTime         @default(now()) @map("created_at")
+  
+  rolePermissions RolePermission[]
+  users           User[]
+  
+  @@map("roles")
 }
+
+model Permission {
+  id          String   @id @default(uuid())
+  code        String   @unique // CREATE_COURSE, EDIT_COURSE, PUBLISH_COURSE, etc.
+  module      String   // COURSE, QUIZ, REPORTING, USER, etc.
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  rolePermissions RolePermission[]
+  
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String @map("role_id")
+  permissionId String @map("permission_id")
+  
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ============================================================================
+// 2️⃣ COURSE GOVERNANCE DOMAIN
+// ============================================================================
+
+model CourseVisibilityType {
+  id          String   @id @default(uuid())
+  code        String   @unique // EVERYONE, SIGNED_IN, PRIVATE, ORGANIZATION_ONLY
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("course_visibility_types")
+}
+
+model CourseAccessType {
+  id                 String   @id @default(uuid())
+  code               String   @unique // OPEN, INVITATION, PAYMENT, SUBSCRIPTION, LICENSE_BASED
+  requiresPayment    Boolean  @default(false) @map("requires_payment")
+  requiresInvitation Boolean  @default(false) @map("requires_invitation")
+  description        String?
+  isActive           Boolean  @default(true) @map("is_active")
+  createdAt          DateTime @default(now()) @map("created_at")
+  
+  @@map("course_access_types")
+}
+
+model CourseStatusType {
+  id          String   @id @default(uuid())
+  code        String   @unique // DRAFT, UNDER_REVIEW, PUBLISHED, ARCHIVED
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("course_status_types")
+}
+
+model CourseCategory {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  parentId  String?   @map("parent_id")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  
+  parent   CourseCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children CourseCategory[] @relation("CategoryHierarchy")
+  
+  @@map("course_categories")
+}
+
+model CourseTagMaster {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("course_tags_master")
+}
+
+// ============================================================================
+// 3️⃣ CONTENT ENGINE DOMAIN
+// ============================================================================
+
+model LessonType {
+  id               String   @id @default(uuid())
+  code             String   @unique // VIDEO, DOCUMENT, IMAGE, QUIZ, LIVE, ASSIGNMENT, SCORM
+  name             String
+  hasDuration      Boolean  @default(false) @map("has_duration")
+  supportsDownload Boolean  @default(false) @map("supports_download")
+  hasGrading       Boolean  @default(false) @map("has_grading")
+  description      String?
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+  
+  @@map("lesson_types")
+}
+
+model AttachmentType {
+  id          String   @id @default(uuid())
+  code        String   @unique // FILE, EXTERNAL_LINK, EMBEDDED_RESOURCE
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("attachment_types")
+}
+
+model MediaProvider {
+  id              String   @id @default(uuid())
+  name            String   @unique // YOUTUBE, VIMEO, AWS_S3, GOOGLE_DRIVE
+  embedSupported  Boolean  @default(false) @map("embed_supported")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  @@map("media_providers")
+}
+
+// ============================================================================
+// 4️⃣ ACCESS & ENROLLMENT ENGINE DOMAIN
+// ============================================================================
+
+model EnrollmentStatusType {
+  id          String   @id @default(uuid())
+  code        String   @unique // INVITED, ENROLLED, STARTED, COMPLETED, DROPPED
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("enrollment_status_types")
+}
+
+model ProgressStatusType {
+  id          String   @id @default(uuid())
+  code        String   @unique // NOT_STARTED, IN_PROGRESS, COMPLETED
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("progress_status_types")
+}
+
+model PaymentStatusType {
+  id          String   @id @default(uuid())
+  code        String   @unique // PENDING, SUCCESS, FAILED, REFUNDED
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("payment_status_types")
+}
+
+model AccessDurationType {
+  id          String   @id @default(uuid())
+  code        String   @unique // LIFETIME, FIXED_DAYS, DATE_RANGE
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("access_duration_types")
+}
+
+// ============================================================================
+// 5️⃣ QUIZ & ASSESSMENT ENGINE DOMAIN
+// ============================================================================
+
+model QuestionType {
+  id            String   @id @default(uuid())
+  code          String   @unique // SINGLE_CHOICE, MULTIPLE_CHOICE, TRUE_FALSE, TEXT, MATCHING
+  name          String
+  autoEvaluated Boolean  @default(true) @map("auto_evaluated")
+  description   String?
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  @@map("question_types")
+}
+
+model AttemptRewardPolicy {
+  id         String   @id @default(uuid())
+  quizId     String?  @map("quiz_id") // Nullable for global default policies
+  attemptFrom Int     @map("attempt_from")
+  attemptTo   Int?    @map("attempt_to") // NULL means "and above"
+  points      Int
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("attempt_reward_policies")
+}
+
+model GradingPolicy {
+  id                      String   @id @default(uuid())
+  name                    String
+  passPercentage          Int      @map("pass_percentage") // 0-100
+  maxAttempts             Int?     @map("max_attempts") // NULL means unlimited
+  allowRetryImmediately   Boolean  @default(true) @map("allow_retry_immediately")
+  description             String?
+  isActive                Boolean  @default(true) @map("is_active")
+  createdAt               DateTime @default(now()) @map("created_at")
+  
+  @@map("grading_policies")
+}
+
+// ============================================================================
+// 6️⃣ GAMIFICATION ENGINE DOMAIN
+// ============================================================================
+
+model BadgeType {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  minPoints   Int      @map("min_points")
+  maxPoints   Int?     @map("max_points") // NULL means unlimited
+  iconUrl     String?  @map("icon_url")
+  levelOrder  Int      @map("level_order") // For ordering badges (1 = Bronze, 2 = Silver, etc.)
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("badge_types")
+}
+
+model PointSource {
+  id          String   @id @default(uuid())
+  code        String   @unique // QUIZ_COMPLETION, COURSE_COMPLETION, BONUS, ADMIN_GRANT, REFERRAL, EVENT
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("point_sources")
+}
+
+model AchievementRule {
+  id              String   @id @default(uuid())
+  name            String
+  ruleType        String   @map("rule_type") // POINT_BASED, COURSE_COUNT, QUIZ_PERFECT_SCORE
+  thresholdValue  Int      @map("threshold_value")
+  rewardPoints    Int?     @map("reward_points")
+  badgeId         String?  @map("badge_id") // Optional badge to award
+  description     String?
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  @@map("achievement_rules")
+}
+
+// ============================================================================
+// 7️⃣ REVIEW & FEEDBACK ENGINE DOMAIN
+// ============================================================================
+
+model RatingScale {
+  id          String   @id @default(uuid())
+  value       Int      @unique // 1, 2, 3, 4, 5
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("rating_scales")
+}
+
+model ReviewStatusType {
+  id          String   @id @default(uuid())
+  code        String   @unique // PENDING_APPROVAL, APPROVED, REJECTED
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("review_status_types")
+}
+
+// ============================================================================
+// 8️⃣ REPORTING & ANALYTICS ENGINE DOMAIN
+// ============================================================================
+
+model ReportType {
+  id          String   @id @default(uuid())
+  code        String   @unique // COURSE_PROGRESS, QUIZ_ANALYTICS, USER_PERFORMANCE
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("report_types")
+}
+
+model TimeGranularityType {
+  id          String   @id @default(uuid())
+  code        String   @unique // DAILY, WEEKLY, MONTHLY, YEARLY
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("time_granularity_types")
+}
+
+// ============================================================================
+// 9️⃣ SYSTEM CONFIGURATION LAYER
+// ============================================================================
+
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  dataType    String   @map("data_type") // STRING, NUMBER, BOOLEAN, JSON
+  module      String   // COURSE, QUIZ, UPLOAD, VIDEO, etc.
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@map("system_settings")
+}
+
+// ============================================================================
+// EXISTING USER MODEL (Updated to use Role relation)
+// ============================================================================
 
 model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  roleId    String   @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  role Role @relation(fields: [roleId], references: [id])
+  
+  @@map("users")
 }

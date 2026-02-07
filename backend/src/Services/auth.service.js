@@ -13,6 +13,18 @@ const register = async (userData) => {
         throw new Error('User already exists');
     }
 
+    // Default to LEARNER if no role provided
+    const roleCode = role ? role.toUpperCase() : 'LEARNER';
+
+    // Find the role in master data
+    const userRole = await prisma.role.findUnique({
+        where: { code: roleCode }
+    });
+
+    if (!userRole) {
+        throw new Error(`Role '${roleCode}' not found`);
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
@@ -20,8 +32,13 @@ const register = async (userData) => {
             name,
             email,
             password: hashedPassword,
-            role: role || 'USER',
+            role: {
+                connect: { id: userRole.id }
+            }
         },
+        include: {
+            role: true // Include role details in response
+        }
     });
 
     // Exclude password from return
@@ -32,6 +49,9 @@ const register = async (userData) => {
 const login = async (email, password) => {
     const user = await prisma.user.findUnique({
         where: { email },
+        include: {
+            role: true // Include role details
+        }
     });
 
     if (!user) {
@@ -45,7 +65,12 @@ const login = async (email, password) => {
     }
 
     const token = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
+        {
+            id: user.id,
+            email: user.email,
+            role: user.role.code,
+            roleId: user.role.id
+        },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
