@@ -1599,6 +1599,159 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "Course Reviews",
+                    "item": [
+                        {
+                            "name": "Get Reviews",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/courses/:courseId/reviews?page=1&limit=10&sortBy=createdAt&sortOrder=desc",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "courses",
+                                        ":courseId",
+                                        "reviews"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "sortBy",
+                                            "value": "createdAt",
+                                            "description": "Field to sort by (createdAt, rating)"
+                                        },
+                                        {
+                                            "key": "sortOrder",
+                                            "value": "desc",
+                                            "description": "Sort order (asc, desc)"
+                                        },
+                                        {
+                                            "key": "rating",
+                                            "value": "5",
+                                            "disabled": true,
+                                            "description": "Filter by rating (1-5)"
+                                        }
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE",
+                                            "description": "ID of the course"
+                                        }
+                                    ]
+                                },
+                                "description": "Get all reviews for a course. Supports pagination, sorting, and filtering by rating.\\n\\n**Query Parameters:**\\n- `page` (optional): Page number (default: 1)\\n- `limit` (optional): Items per page (default: 10)\\n- `sortBy` (optional): Field to sort by (default: createdAt)\\n- `sortOrder` (optional): Sort order - asc/desc (default: desc)\\n- `rating` (optional): Filter by specific rating (1-5)\\n\\n**Authorization:** No authentication required (public)"
+                            }
+                        },
+                        {
+                            "name": "Create Review",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "if (pm.response.code === 201) {",
+                                            "    const response = pm.response.json();",
+                                            "    console.log('Review created successfully');",
+                                            "    console.log('Review ID:', response.data.id);",
+                                            "}"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"rating\": 5,\n  \"comment\": \"This is an excellent course! I learned so much.\"}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/courses/:courseId/reviews",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "courses",
+                                        ":courseId",
+                                        "reviews"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE",
+                                            "description": "ID of the course to review"
+                                        }
+                                    ]
+                                },
+                                "description": "Create a review for a course. Requires authentication. Users must be enrolled in the course. One review per user per course.\n\n**Request Body:**\n- `rating` (required): Integer between 1-5\n- `comment` (optional): Review text\n\n**Authorization:** Any authenticated user (enrolled in course)"
+                            }
+                        },
+                        {
+                            "name": "Delete Review",
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "exec": [
+                                            "if (pm.response.code === 200) {",
+                                            "    console.log('Review deleted successfully');",
+                                            "}"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/courses/:courseId/reviews/:reviewId",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "courses",
+                                        ":courseId",
+                                        "reviews",
+                                        ":reviewId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE",
+                                            "description": "ID of the course"
+                                        },
+                                        {
+                                            "key": "reviewId",
+                                            "value": "REVIEW_ID_HERE",
+                                            "description": "ID of the review to delete"
+                                        }
+                                    ]
+                                },
+                                "description": "Delete a course review. Requires authentication.\n\n**Authorization:** Review owner OR ADMIN role"
+                            }
+                        }
+                    ]
                 }
             ]
         }
