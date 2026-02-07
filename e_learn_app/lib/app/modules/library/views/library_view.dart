@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../achievements/views/achievements_view.dart';
-import '../../home/views/home_view.dart';
+
+import '../../../widgets/app_bottom_nav_bar.dart';
 
 class LibraryView extends StatefulWidget {
   const LibraryView({super.key});
@@ -169,7 +169,7 @@ class _LibraryViewState extends State<LibraryView> {
           ],
         ),
       ),
-      bottomNavigationBar: const LibraryBottomNavBar(),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 1),
     );
   }
 
@@ -460,111 +460,6 @@ class LibraryCourseCard extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LibraryBottomNavBar extends StatelessWidget {
-  const LibraryBottomNavBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildNavItem(
-                  context,
-                  icon: Icons.home_outlined,
-                  label: 'Home',
-                  isActive: false,
-                  onTap: () {
-                    // Navigate back to Home if we are not already there
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                ),
-                _buildNavItem(
-                  context,
-                  icon: Icons.auto_stories,
-                  label: 'Library',
-                  isActive: true,
-                  isFilled: true,
-                ),
-                _buildNavItem(
-                  context,
-                  icon: Icons.leaderboard_outlined,
-                  label: 'Ranking',
-                  isActive: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AchievementsView(),
-                      ),
-                    );
-                  },
-                ),
-                _buildNavItem(
-                  context,
-                  icon: Icons.person_outline,
-                  label: 'Profile',
-                  isActive: false,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Container(
-              width: 128,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300]!.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required bool isActive,
-    bool isFilled = false,
-    VoidCallback? onTap,
-  }) {
-    final color = isActive ? const Color(0xFF1F3D89) : Colors.grey[400];
-
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.lexend(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: color,
             ),
           ),
         ],

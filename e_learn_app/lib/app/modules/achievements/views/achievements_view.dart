@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../widgets/app_bottom_nav_bar.dart';
 
 class AchievementsView extends StatelessWidget {
   const AchievementsView({super.key});
@@ -43,6 +44,7 @@ class AchievementsView extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const AppBottomNavBar(currentIndex: 2),
     );
   }
 

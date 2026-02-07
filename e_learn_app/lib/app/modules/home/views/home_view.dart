@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/home_controller.dart';
-import '../../achievements/views/achievements_view.dart';
-import '../../library/views/library_view.dart';
+import '../../../widgets/app_bottom_nav_bar.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -117,7 +116,12 @@ class HomeDashboard extends StatelessWidget {
             ),
           ],
         ),
-        const Positioned(bottom: 0, left: 0, right: 0, child: BottomNavBar()),
+        const Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: AppBottomNavBar(currentIndex: 0),
+        ),
       ],
     );
   }
@@ -527,105 +531,6 @@ class CourseCard extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildNavItem(icon: Icons.home, label: 'Home', isActive: true),
-                _buildNavItem(
-                  icon: Icons.library_books,
-                  label: 'Library',
-                  isActive: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LibraryView(),
-                      ),
-                    );
-                  },
-                ),
-                _buildNavItem(
-                  icon: Icons.analytics,
-                  label: 'Progress',
-                  isActive: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AchievementsView(),
-                      ),
-                    );
-                  },
-                ),
-                _buildNavItem(
-                  icon: Icons.person,
-                  label: 'Profile',
-                  isActive: false,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Container(
-              width: 128,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300]!.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required IconData icon,
-    required String label,
-    required bool isActive,
-    VoidCallback? onTap,
-  }) {
-    final color = isActive ? const Color(0xFF1F3D89) : Colors.grey[600];
-
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.lexend(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: color,
-              letterSpacing: 0.5,
             ),
           ),
         ],
