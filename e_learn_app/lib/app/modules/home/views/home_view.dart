@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/home_controller.dart';
 import '../../achievements/views/achievements_view.dart';
+import '../../library/views/library_view.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -557,6 +558,14 @@ class BottomNavBar extends StatelessWidget {
                   icon: Icons.library_books,
                   label: 'Library',
                   isActive: false,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LibraryView(),
+                      ),
+                    );
+                  },
                 ),
                 _buildNavItem(
                   icon: Icons.analytics,
