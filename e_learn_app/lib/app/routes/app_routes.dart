@@ -8,6 +8,7 @@ abstract class Routes {
   static const COURSE_DETAIL = _Paths.COURSE_DETAIL;
   static const LESSON_PLAYER = _Paths.LESSON_PLAYER;
   static const COURSE_COMPLETION = _Paths.COURSE_COMPLETION;
+  static const LEARNING_PATH_TRANSITION = _Paths.LEARNING_PATH_TRANSITION;
 }
 
 abstract class _Paths {
@@ -17,4 +18,5 @@ abstract class _Paths {
   static const COURSE_DETAIL = '/course-detail';
   static const LESSON_PLAYER = '/lesson-player';
   static const COURSE_COMPLETION = '/course-completion';
+  static const LEARNING_PATH_TRANSITION = '/learning-path-transition';
 }

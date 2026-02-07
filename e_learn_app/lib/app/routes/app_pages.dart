@@ -6,6 +6,8 @@ import '../modules/course_detail/bindings/course_detail_binding.dart';
 import '../modules/course_detail/views/course_detail_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/learning_path_transition/bindings/learning_path_transition_binding.dart';
+import '../modules/learning_path_transition/views/learning_path_transition_view.dart';
 import '../modules/lesson_player/bindings/lesson_player_binding.dart';
 import '../modules/lesson_player/views/lesson_player_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -43,6 +45,11 @@ class AppPages {
       name: _Paths.COURSE_COMPLETION,
       page: () => const CourseCompletionView(),
       binding: CourseCompletionBinding(),
+    ),
+    GetPage(
+      name: _Paths.LEARNING_PATH_TRANSITION,
+      page: () => const LearningPathTransitionView(),
+      binding: LearningPathTransitionBinding(),
     ),
   ];
 }

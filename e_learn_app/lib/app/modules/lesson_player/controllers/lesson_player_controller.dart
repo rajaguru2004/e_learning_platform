@@ -16,12 +16,25 @@ class LessonPlayerController extends GetxController {
   }
 
   void goToNextLesson() {
-    // Navigate to next lesson
-    Get.snackbar(
-      'Next Lesson',
-      'Loading Lesson 5: Color Theory in Depth',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    try {
+      // Navigate to learning path transition screen
+      Get.toNamed(
+        '/learning-path-transition',
+        arguments: {
+          'currentIndex': 2, // Current lesson (Lesson 3, 0-indexed)
+          'nextIndex': 3, // Next lesson (Lesson 4, 0-indexed)
+        },
+      );
+      print('Navigating to learning path transition...');
+    } catch (e) {
+      print('Navigation error: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to load animation. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   @override
