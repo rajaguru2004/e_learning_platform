@@ -12,21 +12,6 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F8),
       body: const SafeArea(child: HomeDashboard()),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          print('🧪 TEST: Navigating directly to learning path animation...');
-          Get.toNamed(
-            '/learning-path-transition',
-            arguments: {'currentIndex': 2, 'nextIndex': 3},
-          );
-        },
-        backgroundColor: const Color(0xFF2EC4B6),
-        icon: const Icon(Icons.animation),
-        label: Text(
-          'Test Animation',
-          style: GoogleFonts.lexend(fontWeight: FontWeight.bold),
-        ),
-      ),
     );
   }
 }
