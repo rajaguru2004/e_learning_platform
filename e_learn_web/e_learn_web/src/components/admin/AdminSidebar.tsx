@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { isInstructor } from '@/lib/auth';
 
 interface NavItem {
     label: string;
@@ -16,6 +17,11 @@ const navigationItems: NavItem[] = [
         label: 'Dashboard',
         href: '/admin/dashboard',
         icon: '📊',
+    },
+    {
+        label: 'My Courses',
+        href: '/admin/instructor/dashboard',
+        icon: '📝',
     },
     {
         label: 'User Management',
@@ -72,6 +78,11 @@ const navigationItems: NavItem[] = [
 export default function AdminSidebar() {
     const pathname = usePathname();
     const [expandedItem, setExpandedItem] = useState<string | null>('Course Governance');
+    const [isUserInstructor, setIsUserInstructor] = useState(false);
+
+    useEffect(() => {
+        setIsUserInstructor(isInstructor());
+    }, []);
 
     const isActive = (href: string) => {
         return pathname === href || pathname.startsWith(href + '/');
@@ -156,131 +167,139 @@ export default function AdminSidebar() {
                     padding: 'var(--admin-space-lg) 0',
                 }}
             >
-                {navigationItems.map((item) => (
-                    <div key={item.label}>
-                        {item.children ? (
-                            <>
-                                <button
-                                    onClick={() => toggleExpand(item.label)}
+                {navigationItems
+                    .filter((item) => {
+                        // Hide "My Courses" for non-instructors
+                        if (item.label === 'My Courses' && !isUserInstructor) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    .map((item) => (
+                        <div key={item.label}>
+                            {item.children ? (
+                                <>
+                                    <button
+                                        onClick={() => toggleExpand(item.label)}
+                                        style={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            padding: 'var(--admin-space-md) var(--admin-space-xl)',
+                                            fontSize: 'var(--admin-text-sm)',
+                                            fontWeight: 'var(--admin-font-medium)',
+                                            color: isActive(item.href)
+                                                ? 'var(--admin-primary-blue)'
+                                                : 'var(--admin-text-secondary)',
+                                            background: 'transparent',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'all var(--admin-transition-base)',
+                                            fontFamily: 'var(--admin-font-family)',
+                                            textAlign: 'left',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isActive(item.href)) {
+                                                e.currentTarget.style.background = 'var(--admin-bg-secondary)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isActive(item.href)) {
+                                                e.currentTarget.style.background = 'transparent';
+                                            }
+                                        }}
+                                    >
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--admin-space-md)' }}>
+                                            <span style={{ fontSize: '1.125rem' }}>{item.icon}</span>
+                                            {item.label}
+                                        </span>
+                                        <span style={{ fontSize: '0.75rem' }}>
+                                            {expandedItem === item.label ? '▼' : '▶'}
+                                        </span>
+                                    </button>
+                                    {expandedItem === item.label && (
+                                        <div style={{ paddingLeft: 'var(--admin-space-2xl)' }}>
+                                            {item.children.map((child) => (
+                                                <Link
+                                                    key={child.href}
+                                                    href={child.href}
+                                                    style={{
+                                                        display: 'block',
+                                                        padding: 'var(--admin-space-sm) var(--admin-space-xl)',
+                                                        fontSize: 'var(--admin-text-sm)',
+                                                        fontWeight: 'var(--admin-font-normal)',
+                                                        color: isActive(child.href)
+                                                            ? 'var(--admin-primary-blue)'
+                                                            : 'var(--admin-text-secondary)',
+                                                        textDecoration: 'none',
+                                                        borderLeft: isActive(child.href)
+                                                            ? '3px solid var(--admin-primary-blue)'
+                                                            : '3px solid transparent',
+                                                        transition: 'all var(--admin-transition-base)',
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        if (!isActive(child.href)) {
+                                                            e.currentTarget.style.background = 'var(--admin-bg-secondary)';
+                                                            e.currentTarget.style.color = 'var(--admin-text-primary)';
+                                                        }
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        if (!isActive(child.href)) {
+                                                            e.currentTarget.style.background = 'transparent';
+                                                            e.currentTarget.style.color = 'var(--admin-text-secondary)';
+                                                        }
+                                                    }}
+                                                >
+                                                    {child.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <Link
+                                    href={item.href}
                                     style={{
-                                        width: '100%',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        justifyContent: 'space-between',
+                                        gap: 'var(--admin-space-md)',
                                         padding: 'var(--admin-space-md) var(--admin-space-xl)',
                                         fontSize: 'var(--admin-text-sm)',
                                         fontWeight: 'var(--admin-font-medium)',
                                         color: isActive(item.href)
                                             ? 'var(--admin-primary-blue)'
                                             : 'var(--admin-text-secondary)',
-                                        background: 'transparent',
-                                        border: 'none',
-                                        cursor: 'pointer',
+                                        textDecoration: 'none',
+                                        background: isActive(item.href) ? 'rgba(31, 60, 136, 0.05)' : 'transparent',
+                                        borderLeft: isActive(item.href)
+                                            ? '3px solid var(--admin-primary-blue)'
+                                            : '3px solid transparent',
                                         transition: 'all var(--admin-transition-base)',
-                                        fontFamily: 'var(--admin-font-family)',
-                                        textAlign: 'left',
                                     }}
                                     onMouseEnter={(e) => {
                                         if (!isActive(item.href)) {
                                             e.currentTarget.style.background = 'var(--admin-bg-secondary)';
+                                            e.currentTarget.style.color = 'var(--admin-text-primary)';
                                         }
                                     }}
                                     onMouseLeave={(e) => {
                                         if (!isActive(item.href)) {
-                                            e.currentTarget.style.background = 'transparent';
+                                            e.currentTarget.style.background = isActive(item.href)
+                                                ? 'rgba(31, 60, 136, 0.05)'
+                                                : 'transparent';
+                                            e.currentTarget.style.color = isActive(item.href)
+                                                ? 'var(--admin-primary-blue)'
+                                                : 'var(--admin-text-secondary)';
                                         }
                                     }}
                                 >
-                                    <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--admin-space-md)' }}>
-                                        <span style={{ fontSize: '1.125rem' }}>{item.icon}</span>
-                                        {item.label}
-                                    </span>
-                                    <span style={{ fontSize: '0.75rem' }}>
-                                        {expandedItem === item.label ? '▼' : '▶'}
-                                    </span>
-                                </button>
-                                {expandedItem === item.label && (
-                                    <div style={{ paddingLeft: 'var(--admin-space-2xl)' }}>
-                                        {item.children.map((child) => (
-                                            <Link
-                                                key={child.href}
-                                                href={child.href}
-                                                style={{
-                                                    display: 'block',
-                                                    padding: 'var(--admin-space-sm) var(--admin-space-xl)',
-                                                    fontSize: 'var(--admin-text-sm)',
-                                                    fontWeight: 'var(--admin-font-normal)',
-                                                    color: isActive(child.href)
-                                                        ? 'var(--admin-primary-blue)'
-                                                        : 'var(--admin-text-secondary)',
-                                                    textDecoration: 'none',
-                                                    borderLeft: isActive(child.href)
-                                                        ? '3px solid var(--admin-primary-blue)'
-                                                        : '3px solid transparent',
-                                                    transition: 'all var(--admin-transition-base)',
-                                                }}
-                                                onMouseEnter={(e) => {
-                                                    if (!isActive(child.href)) {
-                                                        e.currentTarget.style.background = 'var(--admin-bg-secondary)';
-                                                        e.currentTarget.style.color = 'var(--admin-text-primary)';
-                                                    }
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    if (!isActive(child.href)) {
-                                                        e.currentTarget.style.background = 'transparent';
-                                                        e.currentTarget.style.color = 'var(--admin-text-secondary)';
-                                                    }
-                                                }}
-                                            >
-                                                {child.label}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <Link
-                                href={item.href}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 'var(--admin-space-md)',
-                                    padding: 'var(--admin-space-md) var(--admin-space-xl)',
-                                    fontSize: 'var(--admin-text-sm)',
-                                    fontWeight: 'var(--admin-font-medium)',
-                                    color: isActive(item.href)
-                                        ? 'var(--admin-primary-blue)'
-                                        : 'var(--admin-text-secondary)',
-                                    textDecoration: 'none',
-                                    background: isActive(item.href) ? 'rgba(31, 60, 136, 0.05)' : 'transparent',
-                                    borderLeft: isActive(item.href)
-                                        ? '3px solid var(--admin-primary-blue)'
-                                        : '3px solid transparent',
-                                    transition: 'all var(--admin-transition-base)',
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (!isActive(item.href)) {
-                                        e.currentTarget.style.background = 'var(--admin-bg-secondary)';
-                                        e.currentTarget.style.color = 'var(--admin-text-primary)';
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (!isActive(item.href)) {
-                                        e.currentTarget.style.background = isActive(item.href)
-                                            ? 'rgba(31, 60, 136, 0.05)'
-                                            : 'transparent';
-                                        e.currentTarget.style.color = isActive(item.href)
-                                            ? 'var(--admin-primary-blue)'
-                                            : 'var(--admin-text-secondary)';
-                                    }
-                                }}
-                            >
-                                <span style={{ fontSize: '1.125rem' }}>{item.icon}</span>
-                                {item.label}
-                            </Link>
-                        )}
-                    </div>
-                ))}
+                                    <span style={{ fontSize: '1.125rem' }}>{item.icon}</span>
+                                    {item.label}
+                                </Link>
+                            )}
+                        </div>
+                    ))}
             </nav>
 
             {/* Footer / Version Info */}

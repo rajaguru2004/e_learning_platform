@@ -65,3 +65,21 @@ export function isAuthenticated(): boolean {
 export function logout(): void {
     clearToken();
 }
+
+/**
+ * Get the current user's role code
+ * @returns Role code string or null if no user data
+ */
+export function getUserRole(): string | null {
+    const user = getUser();
+    return user?.role?.code || null;
+}
+
+/**
+ * Check if the current user is an instructor
+ * @returns true if user has INSTRUCTOR role, false otherwise
+ */
+export function isInstructor(): boolean {
+    return getUserRole() === 'INSTRUCTOR';
+}
+

@@ -6,6 +6,30 @@ import { UsersResponse } from '@/types/users';
 import { RolesResponse, CreateRoleRequest, CreateRoleResponse } from '@/types/roles';
 import { CoursesResponse, ApproveRejectResponse } from '@/types/courses';
 import { EnrollmentsResponse, ManualEnrollRequest, ManualEnrollResponse } from '@/types/enrollments';
+import {
+    MyCoursesResponse,
+    CreateCourseRequest,
+    CreateCourseResponse,
+    UpdateCourseRequest,
+    UpdateCourseResponse,
+    SubmitCourseResponse,
+    DeleteCourseResponse
+} from '@/types/instructor';
+import {
+    BadgesResponse,
+    CreateBadgeRequest,
+    CreateBadgeResponse,
+    UpdateBadgeRequest,
+    UpdateBadgeResponse,
+    UpdateBadgeIconRequest,
+    UpdateBadgeIconResponse,
+    PointsLogResponse,
+    GrantPointsRequest,
+    DeductPointsRequest,
+    PointsActionResponse,
+    LeaderboardResponse,
+    CourseReviewsResponse
+} from '@/types/badges';
 import { getToken } from '@/lib/auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
@@ -299,3 +323,375 @@ export async function manualEnrollUser(
     const data: ManualEnrollResponse = await response.json();
     return data;
 }
+
+// ==================== INSTRUCTOR COURSE MANAGEMENT ====================
+
+/**
+ * Creates a new course (Instructor only)
+ * @param courseData - Course creation data
+ * @returns Promise resolving to created course data
+ * @throws Error if the API request fails
+ */
+export async function createCourse(courseData: CreateCourseRequest): Promise<CreateCourseResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/courses`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(courseData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to create course: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CreateCourseResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches courses created by the logged-in instructor
+ * @param page - Page number (default: 1)
+ * @param limit - Number of courses per page (default: 10)
+ * @returns Promise resolving to instructor's courses with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchMyCourses(
+    page: number = 1,
+    limit: number = 10
+): Promise<MyCoursesResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/v1/courses/my?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch my courses: ${response.status} ${response.statusText}`);
+    }
+
+    const data: MyCoursesResponse = await response.json();
+    return data;
+}
+
+/**
+ * Updates an existing course (Instructor only)
+ * @param courseId - ID of the course to update
+ * @param courseData - Course update data
+ * @returns Promise resolving to updated course data
+ * @throws Error if the API request fails
+ */
+export async function updateCourse(
+    courseId: string,
+    courseData: UpdateCourseRequest
+): Promise<UpdateCourseResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/courses/${courseId}`, {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(courseData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to update course: ${response.status} ${response.statusText}`);
+    }
+
+    const data: UpdateCourseResponse = await response.json();
+    return data;
+}
+
+/**
+ * Submits a course for review (Instructor only)
+ * @param courseId - ID of the course to submit
+ * @returns Promise resolving to submission response
+ * @throws Error if the API request fails
+ */
+export async function submitCourseForReview(courseId: string): Promise<SubmitCourseResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/courses/${courseId}/submit`, {
+        method: 'POST',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to submit course: ${response.status} ${response.statusText}`);
+    }
+
+    const data: SubmitCourseResponse = await response.json();
+    return data;
+}
+
+/**
+ * Deletes a course (Instructor only)
+ * @param courseId - ID of the course to delete
+ * @returns Promise resolving to deletion response
+ * @throws Error if the API request fails
+ */
+export async function deleteCourse(courseId: string): Promise<DeleteCourseResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/v1/courses/${courseId}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to delete course: ${response.status} ${response.statusText}`);
+    }
+
+    const data: DeleteCourseResponse = await response.json();
+    return data;
+}
+
+// ==================== BADGE MANAGEMENT ====================
+
+/**
+ * Fetches all badges from the backend API with pagination
+ * @param page - Page number (default: 1)
+ * @param limit - Number of badges per page (default: 10)
+ * @returns Promise resolving to badges data with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchBadges(
+    page: number = 1,
+    limit: number = 10
+): Promise<BadgesResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/badges?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch badges: ${response.status} ${response.statusText}`);
+    }
+
+    const data: BadgesResponse = await response.json();
+    return data;
+}
+
+/**
+ * Creates a new badge
+ * @param badgeData - Badge creation data
+ * @returns Promise resolving to created badge data
+ * @throws Error if the API request fails
+ */
+export async function createBadge(badgeData: CreateBadgeRequest): Promise<CreateBadgeResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/badges`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(badgeData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to create badge: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CreateBadgeResponse = await response.json();
+    return data;
+}
+
+/**
+ * Updates an existing badge
+ * @param badgeId - ID of the badge to update
+ * @param badgeData - Badge update data
+ * @returns Promise resolving to updated badge data
+ * @throws Error if the API request fails
+ */
+export async function updateBadge(
+    badgeId: string,
+    badgeData: UpdateBadgeRequest
+): Promise<UpdateBadgeResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/badges/${badgeId}`, {
+        method: 'PATCH',
+        headers: getHeaders(),
+        body: JSON.stringify(badgeData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to update badge: ${response.status} ${response.statusText}`);
+    }
+
+    const data: UpdateBadgeResponse = await response.json();
+    return data;
+}
+
+/**
+ * Updates a badge's icon
+ * @param badgeId - ID of the badge to update
+ * @param iconData - Icon update data
+ * @returns Promise resolving to updated badge data
+ * @throws Error if the API request fails
+ */
+export async function updateBadgeIcon(
+    badgeId: string,
+    iconData: UpdateBadgeIconRequest
+): Promise<UpdateBadgeIconResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/badges/${badgeId}/icon`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(iconData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to update badge icon: ${response.status} ${response.statusText}`);
+    }
+
+    const data: UpdateBadgeIconResponse = await response.json();
+    return data;
+}
+
+// ==================== POINTS MANAGEMENT ====================
+
+/**
+ * Fetches points log from the backend API with pagination
+ * @param page - Page number (default: 1)
+ * @param limit - Number of log entries per page (default: 10)
+ * @returns Promise resolving to points log data with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchPointsLog(
+    page: number = 1,
+    limit: number = 10
+): Promise<PointsLogResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/points?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch points log: ${response.status} ${response.statusText}`);
+    }
+
+    const data: PointsLogResponse = await response.json();
+    return data;
+}
+
+/**
+ * Grants points to a user
+ * @param grantData - Data for granting points (user_id, points, reason)
+ * @returns Promise resolving to points action response
+ * @throws Error if the API request fails
+ */
+export async function grantPoints(grantData: GrantPointsRequest): Promise<PointsActionResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/points/grant`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(grantData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to grant points: ${response.status} ${response.statusText}`);
+    }
+
+    const data: PointsActionResponse = await response.json();
+    return data;
+}
+
+/**
+ * Deducts points from a user
+ * @param deductData - Data for deducting points (user_id, points, reason)
+ * @returns Promise resolving to points action response
+ * @throws Error if the API request fails
+ */
+export async function deductPoints(deductData: DeductPointsRequest): Promise<PointsActionResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/points/deduct`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(deductData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to deduct points: ${response.status} ${response.statusText}`);
+    }
+
+    const data: PointsActionResponse = await response.json();
+    return data;
+}
+
+// ==================== LEADERBOARD ====================
+
+/**
+ * Fetches leaderboard from the backend API with pagination
+ * @param page - Page number (default: 1)
+ * @param limit - Number of entries per page (default: 10)
+ * @returns Promise resolving to leaderboard data with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchLeaderboard(
+    page: number = 1,
+    limit: number = 10
+): Promise<LeaderboardResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/leaderboard?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch leaderboard: ${response.status} ${response.statusText}`);
+    }
+
+    const data: LeaderboardResponse = await response.json();
+    return data;
+}
+
+// ==================== COURSE REVIEWS ====================
+
+/**
+ * Fetches reviews for a specific course
+ * @param courseId - ID of the course
+ * @param page - Page number (default: 1)
+ * @param limit - Number of reviews per page (default: 10)
+ * @param sortBy - Field to sort by (default: 'createdAt')
+ * @param sortOrder - Sort order 'asc' or 'desc' (default: 'desc')
+ * @returns Promise resolving to course reviews with pagination
+ * @throws Error if the API request fails
+ */
+export async function fetchCourseReviews(
+    courseId: string,
+    page: number = 1,
+    limit: number = 10,
+    sortBy: string = 'createdAt',
+    sortOrder: 'asc' | 'desc' = 'desc'
+): Promise<CourseReviewsResponse> {
+    const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        sortBy,
+        sortOrder,
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}/reviews?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch course reviews: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CourseReviewsResponse = await response.json();
+    return data;
+}
+
