@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Advanced Quiz Builder Interface</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Google Fonts: Lexend -->
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1d3c8b",
+                        "accent-teal": "#2EC4B6",
+                        "accent-gold": "#F4C430",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121620",
+                        "text-main": "#2E2E2E",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Lexend', sans-serif;
+            color: #2E2E2E;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .reward-section {
+            background-color: rgba(244, 196, 48, 0.05);
+            border: 1px dashed #F4C430;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col">
+    <!-- Top Navigation Bar -->
+    <header
+        class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark px-6 py-3 h-16 sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center justify-center bg-primary rounded-lg p-1.5 text-white">
+                <span class="material-symbols-outlined text-xl">quiz</span>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-primary dark:text-white leading-tight">Advanced Quiz Builder</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Course: Logic &amp; Critical Thinking 101</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button
+                class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                Preview
+            </button>
+            <button
+                class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">
+                <span class="material-symbols-outlined text-[20px]">settings</span>
+                Settings
+            </button>
+            <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
+            <button
+                class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-90 shadow-sm">
+                Save Quiz
+            </button>
+        </div>
+    </header>
+    <div class="flex flex-1 overflow-hidden h-[calc(100vh-64px)]">
+        <!-- Left Sidebar: Question List -->
+        <aside
+            class="w-80 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark flex flex-col shrink-0">
+            <div class="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Questions (12)</span>
+                <span
+                    class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-primary">filter_list</span>
+            </div>
+            <div class="flex-1 overflow-y-auto p-2 space-y-1 scrollbar-hide">
+                <!-- Question Item Active -->
+                <div
+                    class="flex items-center gap-3 p-3 rounded-lg bg-primary/5 dark:bg-primary/20 border-l-4 border-primary cursor-pointer">
+                    <span class="material-symbols-outlined text-primary text-sm">drag_indicator</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-primary dark:text-white">Q1: Basic Principles</p>
+                        <p class="text-xs text-gray-500 truncate">Multiple Choice</p>
+                    </div>
+                    <span class="material-symbols-outlined text-accent-teal text-sm">check_circle</span>
+                </div>
+                <!-- Question Item -->
+                <div
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group">
+                    <span
+                        class="material-symbols-outlined text-gray-300 group-hover:text-gray-400 text-sm">drag_indicator</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-text-main dark:text-gray-300">Q2: Logical Fallacies</p>
+                        <p class="text-xs text-gray-500 truncate">Multiple Choice</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300 text-sm">pending</span>
+                </div>
+                <!-- Question Item -->
+                <div
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group">
+                    <span
+                        class="material-symbols-outlined text-gray-300 group-hover:text-gray-400 text-sm">drag_indicator</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-text-main dark:text-gray-300">Q3: Inductive Reasoning</p>
+                        <p class="text-xs text-gray-500 truncate">True/False</p>
+                    </div>
+                    <span class="material-symbols-outlined text-accent-teal text-sm">check_circle</span>
+                </div>
+                <!-- Repeatable Question Items for scroll -->
+                <div
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group">
+                    <span
+                        class="material-symbols-outlined text-gray-300 group-hover:text-gray-400 text-sm">drag_indicator</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-text-main dark:text-gray-300">Q4: Deductive Proofs</p>
+                        <p class="text-xs text-gray-500 truncate">Multiple Choice</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300 text-sm">pending</span>
+                </div>
+                <div
+                    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer group">
+                    <span
+                        class="material-symbols-outlined text-gray-300 group-hover:text-gray-400 text-sm">drag_indicator</span>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-text-main dark:text-gray-300">Q5: Advanced Syntax</p>
+                        <p class="text-xs text-gray-500 truncate">Multiple Choice</p>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-300 text-sm">error_outline</span>
+                </div>
+            </div>
+            <!-- Add Question Button -->
+            <div class="p-4 bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800">
+                <button
+                    class="w-full bg-primary text-white flex items-center justify-center gap-2 py-3 rounded-lg font-bold hover:shadow-lg transition-shadow">
+                    <span class="material-symbols-outlined">add</span>
+                    Add Question
+                </button>
+            </div>
+        </aside>
+        <!-- Main Workspace: Question Editor -->
+        <main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-8">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <!-- Section Header -->
+                <div class="flex items-end justify-between">
+                    <div>
+                        <span class="text-primary font-bold text-sm uppercase tracking-widest">Question Editor</span>
+                        <h2 class="text-3xl font-bold text-text-main dark:text-white mt-1">Q1: Basic Principles</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button
+                            class="p-2 text-gray-400 hover:text-red-500 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                        <button
+                            class="p-2 text-gray-400 hover:text-primary bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                            <span class="material-symbols-outlined">content_copy</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Question Text Input -->
+                <div
+                    class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Question Text</label>
+                    <div class="relative">
+                        <textarea
+                            class="w-full min-h-[120px] p-4 rounded-lg border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-primary focus:border-primary text-text-main dark:text-gray-200 placeholder-gray-400"
+                            placeholder="Enter the main question context or prompt here..."></textarea>
+                        <div class="absolute bottom-3 right-3 flex gap-2">
+                            <span
+                                class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-primary">image</span>
+                            <span
+                                class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-primary">link</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Multiple Choice Options -->
+                <div
+                    class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300">Multiple Choice
+                            Options</label>
+                        <span class="text-xs text-gray-500">Toggle checkmark to mark as correct</span>
+                    </div>
+                    <div class="space-y-3">
+                        <!-- Option 1 -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 relative">
+                                <input
+                                    class="w-full pl-4 pr-12 py-3 rounded-lg border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-primary focus:border-primary text-sm dark:text-gray-200"
+                                    type="text" value="The law of identity" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <span
+                                        class="material-symbols-outlined text-accent-teal fill-[1]">check_circle</span>
+                                </div>
+                            </div>
+                            <button class="text-gray-300 hover:text-red-500">
+                                <span class="material-symbols-outlined text-xl">close</span>
+                            </button>
+                        </div>
+                        <!-- Option 2 -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 relative">
+                                <input
+                                    class="w-full pl-4 pr-12 py-3 rounded-lg border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-primary focus:border-primary text-sm dark:text-gray-200"
+                                    type="text" value="The fallacy of association" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <span
+                                        class="material-symbols-outlined text-gray-200 cursor-pointer hover:text-accent-teal transition-colors">radio_button_unchecked</span>
+                                </div>
+                            </div>
+                            <button class="text-gray-300 hover:text-red-500">
+                                <span class="material-symbols-outlined text-xl">close</span>
+                            </button>
+                        </div>
+                        <!-- Option 3 -->
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 relative">
+                                <input
+                                    class="w-full pl-4 pr-12 py-3 rounded-lg border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-primary focus:border-primary text-sm dark:text-gray-200"
+                                    type="text" value="The excluded middle theory" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <span
+                                        class="material-symbols-outlined text-gray-200 cursor-pointer hover:text-accent-teal transition-colors">radio_button_unchecked</span>
+                                </div>
+                            </div>
+                            <button class="text-gray-300 hover:text-red-500">
+                                <span class="material-symbols-outlined text-xl">close</span>
+                            </button>
+                        </div>
+                        <button class="mt-2 text-primary text-sm font-semibold flex items-center gap-1 hover:underline">
+                            <span class="material-symbols-outlined text-sm">add_circle</span>
+                            Add Answer Option
+                        </button>
+                    </div>
+                </div>
+                <!-- Rewards / Scoring Section -->
+                <div class="reward-section p-6 rounded-xl bg-white dark:bg-gray-800/50">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined text-accent-gold">workspace_premium</span>
+                        <h3 class="text-sm font-bold text-text-main dark:text-white uppercase tracking-wider">
+                            Attempt-Based Rewards</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Points 1st Attempt -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400">Points for 1st
+                                attempt</label>
+                            <div class="relative">
+                                <input
+                                    class="w-full pl-4 pr-12 py-3 rounded-lg border-accent-gold/30 dark:border-gray-700 dark:bg-gray-900 focus:ring-accent-gold focus:border-accent-gold text-sm font-bold text-primary dark:text-accent-gold"
+                                    type="number" value="100" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <span class="text-xs text-gray-400">pts</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Points 2nd Attempt -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400">Points for 2nd
+                                attempt</label>
+                            <div class="relative">
+                                <input
+                                    class="w-full pl-4 pr-12 py-3 rounded-lg border-accent-gold/30 dark:border-gray-700 dark:bg-gray-900 focus:ring-accent-gold focus:border-accent-gold text-sm font-bold text-primary dark:text-accent-gold"
+                                    type="number" value="50" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <span class="text-xs text-gray-400">pts</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Points 3rd Attempt -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400">Points for 3rd
+                                attempt</label>
+                            <div class="relative">
+                                <input
+                                    class="w-full pl-4 pr-12 py-3 rounded-lg border-accent-gold/30 dark:border-gray-700 dark:bg-gray-900 focus:ring-accent-gold focus:border-accent-gold text-sm font-bold text-primary dark:text-accent-gold"
+                                    type="number" value="25" />
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <span class="text-xs text-gray-400">pts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-[11px] text-gray-500 leading-relaxed italic">
+                        * Scorings above 3 attempts will default to the value of the 3rd attempt. Zero points will be
+                        awarded for skipped questions.
+                    </p>
+                </div>
+                <!-- Action Footer -->
+                <div class="flex justify-between items-center pt-4">
+                    <button class="flex items-center gap-2 text-sm text-gray-500 hover:text-text-main font-medium">
+                        <span class="material-symbols-outlined text-lg">chevron_left</span>
+                        Previous Question
+                    </button>
+                    <button
+                        class="bg-gray-200 dark:bg-gray-700 text-text-main dark:text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-gray-300 transition-colors">
+                        Next Question
+                        <span class="material-symbols-outlined text-lg">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+        <!-- Right Toolbelt / Meta (Optional context) -->
+        <aside
+            class="w-16 border-l border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark flex flex-col items-center py-6 gap-6 shrink-0">
+            <div class="group relative">
+                <span class="material-symbols-outlined text-gray-400 hover:text-primary cursor-pointer">info</span>
+                <span
+                    class="absolute left-[-100px] top-0 hidden group-hover:block bg-gray-800 text-white text-[10px] py-1 px-2 rounded">Logic
+                    Guide</span>
+            </div>
+            <div class="group relative">
+                <span
+                    class="material-symbols-outlined text-gray-400 hover:text-primary cursor-pointer">psychology</span>
+                <span
+                    class="absolute left-[-100px] top-0 hidden group-hover:block bg-gray-800 text-white text-[10px] py-1 px-2 rounded">AI
+                    Assist</span>
+            </div>
+            <div class="group relative">
+                <span class="material-symbols-outlined text-gray-400 hover:text-primary cursor-pointer">history</span>
+                <span
+                    class="absolute left-[-100px] top-0 hidden group-hover:block bg-gray-800 text-white text-[10px] py-1 px-2 rounded">Audit
+                    Log</span>
+            </div>
+            <div class="mt-auto">
+                <span class="material-symbols-outlined text-gray-300 hover:text-red-500 cursor-pointer">report</span>
+            </div>
+        </aside>
+    </div>
+</body>
+
+</html>
