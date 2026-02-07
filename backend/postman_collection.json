@@ -1754,6 +1754,349 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "Admin Reporting & Analytics",
+            "item": [
+                {
+                    "name": "Platform-Level Reports",
+                    "item": [
+                        {
+                            "name": "User Growth Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/user-growth?period=monthly&from=2026-01-01&to=2026-12-31",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "user-growth"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "period",
+                                            "value": "monthly",
+                                            "description": "daily, weekly, monthly, or yearly"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "description": "Start date (ISO format)",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "description": "End date (ISO format)",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get user growth report with period-based grouping. Returns new users per period and cumulative growth.\n\n**Query Parameters:**\n- `period` (optional): daily, weekly, monthly, yearly (default: monthly)\n- `from` (optional): Start date filter (ISO format)\n- `to` (optional): End date filter (ISO format)\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Course Completion Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/course-completion",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "course-completion"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "description": "Start date (ISO format)",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "description": "End date (ISO format)",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get course completion rate report. Returns total enrollments, completed enrollments, and completion percentage.\n\n**Query Parameters:**\n- `from` (optional): Start date filter (ISO format)\n- `to` (optional): End date filter (ISO format)\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Quiz Performance Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/quiz-performance",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "quiz-performance"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get quiz performance report (placeholder - quiz feature not yet implemented).\n\n**Note:** This endpoint returns placeholder data until Quiz models are added to the schema.\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Drop-off Rate Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/dropoff-rate",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "dropoff-rate"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get enrollment drop-off rate report. Analyzes enrollments that were started but not completed.\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Popular Categories Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/popular-categories",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "popular-categories"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get popular course categories report. Returns category-wise enrollment and completion statistics.\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Revenue Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/revenue?period=monthly",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "revenue"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "period",
+                                            "value": "monthly",
+                                            "description": "monthly or yearly"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get revenue report with period-based grouping. Only available if payment functionality is enabled.\n\n**Query Parameters:**\n- `period` (optional): monthly or yearly (default: monthly)\n- `from` (optional): Start date filter\n- `to` (optional): End date filter\n\n**Authorization:** Admin only"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Drill-Down Reports",
+                    "item": [
+                        {
+                            "name": "Instructor Performance Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/instructors?page=1&limit=20",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "instructors"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1",
+                                            "description": "Page number (default: 1)"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20",
+                                            "description": "Items per page (default: 20, max: 100)"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get per-instructor performance metrics including courses, enrollments, completion rate, avg rating, and revenue.\n\n**Query Parameters:**\n- `page` (optional): Page number\n- `limit` (optional): Items per page (1-100)\n- `from` (optional): Start date filter\n- `to` (optional): End date filter\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Course Performance Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/courses?page=1&limit=20",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "courses"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2026-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2026-12-31",
+                                            "disabled": true
+                                        }
+                                    ]
+                                },
+                                "description": "Get per-course performance analytics including enrollments, completion rate, drop-off rate, ratings, and points earned.\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Badge Distribution Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/badges",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "badges"
+                                    ]
+                                },
+                                "description": "Get badge distribution report showing how many users have earned each badge tier.\n\n**Authorization:** Admin only"
+                            }
+                        },
+                        {
+                            "name": "Points Distribution Report",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/reports/points",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "reports",
+                                        "points"
+                                    ]
+                                },
+                                "description": "Get points distribution report including total points, average per user, top 10 users, and distribution by range.\n\n**Authorization:** Admin only"
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
