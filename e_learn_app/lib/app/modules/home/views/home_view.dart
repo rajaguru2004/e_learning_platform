@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/home_controller.dart';
-import '../../../../screens/lesson_viewer_screen.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -498,18 +497,7 @@ class CourseCard extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LessonViewerScreen(
-                            lessonTitle: _getCurrentLessonTitle(),
-                            lessonNumber: _getCurrentLessonNumber(),
-                            duration: _getCurrentLessonDuration(),
-                            totalLessons: _getTotalLessons(),
-                            currentLessonIndex: _getCurrentLessonIndex(),
-                          ),
-                        ),
-                      );
+                      Get.toNamed('/course-detail');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1F3D89),
@@ -542,49 +530,6 @@ class CourseCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _getCurrentLessonTitle() {
-    // Map course titles to current lesson titles
-    final lessonMap = {
-      'Advanced UI Design': 'Modern Color Theory',
-      'Introduction to Python': 'Variables and Data Types',
-      'Financial Literacy 101': 'Understanding Compound Interest',
-    };
-    return lessonMap[title] ?? 'Lesson Content';
-  }
-
-  String _getCurrentLessonNumber() {
-    // Calculate lesson number based on progress
-    final lessonMap = {
-      'Advanced UI Design': '03',
-      'Introduction to Python': '02',
-      'Financial Literacy 101': '01',
-    };
-    return lessonMap[title] ?? '01';
-  }
-
-  String _getCurrentLessonDuration() {
-    final durationMap = {
-      'Advanced UI Design': '22:15',
-      'Introduction to Python': '18:30',
-      'Financial Literacy 101': '15:45',
-    };
-    return durationMap[title] ?? '20:00';
-  }
-
-  int _getTotalLessons() {
-    final totalMap = {
-      'Advanced UI Design': 24,
-      'Introduction to Python': 20,
-      'Financial Literacy 101': 15,
-    };
-    return totalMap[title] ?? 20;
-  }
-
-  int _getCurrentLessonIndex() {
-    // Calculate based on progress (0-indexed)
-    return (progress * _getTotalLessons()).floor();
   }
 }
 
