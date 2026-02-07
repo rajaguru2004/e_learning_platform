@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function AdminSignup() {
     return (
@@ -15,9 +16,11 @@ export default function AdminSignup() {
                     <button className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary transition-colors">
                         Support
                     </button>
-                    <button className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-900 transition-all">
-                        Login
-                    </button>
+                    <Link href="/login">
+                        <button className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-900 transition-all">
+                            Login
+                        </button>
+                    </Link>
                 </div>
             </header>
 
@@ -133,21 +136,23 @@ export default function AdminSignup() {
                             </div>
 
                             {/* Submit Button */}
-                            <button
-                                className="w-full bg-primary hover:bg-blue-900 text-white font-bold py-3.5 rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98]"
-                                type="submit"
-                            >
-                                Create Account
-                            </button>
+                            <Link href="/login">
+                                <button
+                                    className="w-full bg-primary hover:bg-blue-900 text-white font-bold py-3.5 rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98]"
+                                    type="button"
+                                >
+                                    Create Account
+                                </button>
+                            </Link>
                         </form>
 
                         {/* Footer Link */}
                         <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 text-center">
                             <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Already have an account?
-                                <a className="text-primary font-bold hover:underline ml-1" href="#">
+                                <Link className="text-primary font-bold hover:underline ml-1" href="/login">
                                     Login
-                                </a>
+                                </Link>
                             </p>
                         </div>
                     </div>

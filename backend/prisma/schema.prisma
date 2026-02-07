@@ -358,13 +358,14 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  role           Role             @relation(fields: [roleId], references: [id])
-  coursesCreated Course[]         @relation("InstructorCourses")
-  enrollments    Enrollment[]
-  courseProgress CourseProgress[]
-  pointsLedger   PointsLedger[]
-  courseReviews  CourseReview[]
-  payments       Payment[]
+  role            Role             @relation(fields: [roleId], references: [id])
+  coursesCreated  Course[]         @relation("InstructorCourses")
+  reviewedCourses Course[]         @relation("CourseReviewer")
+  enrollments     Enrollment[]
+  courseProgress  CourseProgress[]
+  pointsLedger    PointsLedger[]
+  courseReviews   CourseReview[]
+  payments        Payment[]
 
   @@index([roleId])
   @@index([isActive])
@@ -394,10 +395,15 @@ model Course {
   averageRating   Decimal? @default(0) @map("average_rating") @db.Decimal(3, 2)
   totalReviews    Int      @default(0) @map("total_reviews")
   isActive        Boolean  @default(true) @map("is_active")
+  reviewNote      String?  @map("review_note") @db.Text
+  reviewedBy      String?  @map("reviewed_by")
+  reviewedAt      DateTime? @map("reviewed_at")
+  isLocked        Boolean  @default(false) @map("is_locked")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   instructor  User           @relation("InstructorCourses", fields: [instructorId], references: [id])
+  reviewer    User?          @relation("CourseReviewer", fields: [reviewedBy], references: [id])
   enrollments Enrollment[]
   reviews     CourseReview[]
 
@@ -408,6 +414,10 @@ model Course {
   @@index([isActive])
   @@index([createdAt])
   @@index([averageRating])
+  @@index([reviewedBy])
+  @@index([isLocked])
+  @@index([statusCode, instructorId])
+  @@index([statusCode, isActive])
   @@map("courses")
 }
 
@@ -426,6 +436,9 @@ model Enrollment {
   expiresAt       DateTime? @map("expires_at")
   progressPercent Int       @default(0) @map("progress_percent") // 0-100
   isActive        Boolean   @default(true) @map("is_active")
+  deletedBy       String?   @map("deleted_by")
+  deletedAt       DateTime? @map("deleted_at")
+  deletionReason  String?   @map("deletion_reason") @db.Text
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
@@ -439,6 +452,9 @@ model Enrollment {
   @@index([statusCode])
   @@index([enrolledAt])
   @@index([isActive])
+  @@index([courseId, statusCode])
+  @@index([courseId, isActive])
+  @@index([deletedBy])
   @@map("enrollments")
 }
 

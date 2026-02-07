@@ -532,6 +532,700 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Admin Course Governance",
+            "item": [
+                {
+                    "name": "Course Oversight",
+                    "item": [
+                        {
+                            "name": "Get All Courses",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses?page=1&limit=10&sortBy=created_at&sortOrder=desc",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "status",
+                                            "value": "DRAFT",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "instructor_id",
+                                            "value": "",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "visibility",
+                                            "value": "EVERYONE",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "access_type",
+                                            "value": "OPEN",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "sortBy",
+                                            "value": "created_at"
+                                        },
+                                        {
+                                            "key": "sortOrder",
+                                            "value": "desc"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Force Publish Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"publish\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/publish",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "publish"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Force Unpublish Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"publish\": false\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/publish",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "publish"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Archive Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/archive",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "archive"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Lock Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"is_locked\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/lock",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "lock"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Unlock Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"is_locked\": false\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/lock",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "lock"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Approval Workflow",
+                    "item": [
+                        {
+                            "name": "Approve Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/approve",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "approve"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Reject Course",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"review_note\": \"The course content does not meet quality standards. Please revise the following sections: Introduction module needs more detail, quiz questions need improvement.\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/reject",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "reject"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Enrollment Management",
+                    "item": [
+                        {
+                            "name": "Get Course Enrollments",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/enrollments?page=1&limit=10",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "enrollments"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "status",
+                                            "value": "ENROLLED",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "disabled": true
+                                        }
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Manually Enroll User (Lifetime Access)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": \"USER_ID_HERE\",\n  \"access_duration_type\": \"LIFETIME\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/enroll",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "enroll"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Manually Enroll User (Fixed Days)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": \"USER_ID_HERE\",\n  \"access_duration_type\": \"FIXED_DAYS\",\n  \"duration_days\": 90\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/courses/:courseId/enroll",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "courses",
+                                        ":courseId",
+                                        "enroll"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "courseId",
+                                            "value": "COURSE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Remove Enrollment",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"reason\": \"User violated terms of service\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/enrollments/:enrollmentId",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "enrollments",
+                                        ":enrollmentId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "enrollmentId",
+                                            "value": "ENROLLMENT_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Extend Enrollment Access",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"extend_days\": 30\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/enrollments/:enrollmentId/extend",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "enrollments",
+                                        ":enrollmentId",
+                                        "extend"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "enrollmentId",
+                                            "value": "ENROLLMENT_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Override Payment Status",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/enrollments/:enrollmentId/override-payment",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "enrollments",
+                                        ":enrollmentId",
+                                        "override-payment"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "enrollmentId",
+                                            "value": "ENROLLMENT_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Course Management (Instructor)",
+            "item": [
+                {
+                    "name": "Create Course",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Advanced Node.js Patterns\",\n  \"slug\": \"advanced-nodejs-patterns\",\n  \"description\": \"Master Node.js design patterns and best practices\",\n  \"categoryId\": \"CATEGORY_ID_HERE\",\n  \"visibilityCode\": \"EVERYONE\",\n  \"accessCode\": \"PAYMENT\",\n  \"price\": 49.99,\n  \"duration\": 120\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/courses",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get My Courses",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/courses/my?page=1&limit=10&statusCode=DRAFT",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses",
+                                "my"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                },
+                                {
+                                    "key": "statusCode",
+                                    "value": "DRAFT"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Course By ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/courses/:courseId",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses",
+                                ":courseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "courseId",
+                                    "value": "COURSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Course",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"title\": \"Advanced Node.js Patterns - Updated\",\n  \"price\": 59.99\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/courses/:courseId",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses",
+                                ":courseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "courseId",
+                                    "value": "COURSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Submit Course for Review",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/courses/:courseId/submit",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses",
+                                ":courseId",
+                                "submit"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "courseId",
+                                    "value": "COURSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Course",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/courses/:courseId",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "v1",
+                                "courses",
+                                ":courseId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "courseId",
+                                    "value": "COURSE_ID_HERE"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

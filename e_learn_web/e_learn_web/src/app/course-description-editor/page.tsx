@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function CourseDescriptionEditor() {
     return (
@@ -53,9 +54,9 @@ export default function CourseDescriptionEditor() {
                                 <a className="flex items-center justify-center border-b-[3px] border-primary text-primary px-4 pb-3 pt-2 whitespace-nowrap" href="#">
                                     <span className="text-sm font-bold leading-normal">Course Description</span>
                                 </a>
-                                <a className="flex items-center justify-center border-b-[3px] border-transparent text-gray-500 hover:text-primary dark:text-gray-400 px-6 pb-3 pt-2 whitespace-nowrap transition-all" href="#">
+                                <Link className="flex items-center justify-center border-b-[3px] border-transparent text-gray-500 hover:text-primary dark:text-gray-400 px-6 pb-3 pt-2 whitespace-nowrap transition-all" href="/course-editor">
                                     <span className="text-sm font-medium leading-normal">Curriculum</span>
-                                </a>
+                                </Link>
                                 <a className="flex items-center justify-center border-b-[3px] border-transparent text-gray-500 hover:text-primary dark:text-gray-400 px-6 pb-3 pt-2 whitespace-nowrap transition-all" href="#">
                                     <span className="text-sm font-medium leading-normal">Pricing</span>
                                 </a>

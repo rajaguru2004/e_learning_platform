@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function CourseEditor() {
     return (
@@ -9,9 +10,9 @@ export default function CourseEditor() {
             <div className="max-w-[1200px] mx-auto px-6 py-8">
                 {/* Breadcrumbs */}
                 <nav className="flex items-center gap-2 mb-6 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    <a className="hover:text-primary" href="#">
+                    <Link className="hover:text-primary" href="/admin-courses">
                         Courses
-                    </a>
+                    </Link>
                     <span className="material-symbols-outlined text-sm">chevron_right</span>
                     <span className="text-text-main dark:text-white">Introduction to UI/UX Design</span>
                 </nav>
@@ -54,27 +55,27 @@ export default function CourseEditor() {
                             <span className="material-symbols-outlined text-xl">list_alt</span>
                             Content
                         </a>
-                        <a
+                        <Link
                             className="pb-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-medium text-sm hover:text-text-main dark:hover:text-white transition-colors flex items-center gap-2"
-                            href="#"
+                            href="/course-description-editor"
                         >
                             <span className="material-symbols-outlined text-xl">description</span>
                             Description
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                             className="pb-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-medium text-sm hover:text-text-main dark:hover:text-white transition-colors flex items-center gap-2"
-                            href="#"
+                            href="/course-options"
                         >
                             <span className="material-symbols-outlined text-xl">settings</span>
                             Options
-                        </a>
-                        <a
+                        </Link>
+                        <Link
                             className="pb-4 border-b-2 border-transparent text-gray-500 dark:text-gray-400 font-medium text-sm hover:text-text-main dark:hover:text-white transition-colors flex items-center gap-2"
-                            href="#"
+                            href="/course-quiz-list"
                         >
                             <span className="material-symbols-outlined text-xl">quiz</span>
                             Quiz
-                        </a>
+                        </Link>
                     </nav>
                 </div>
 

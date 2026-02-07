@@ -7,6 +7,9 @@ const authRoutes = require('./Routes/auth.routes');
 const adminRoutes = require('./Routes/adminDashboard.routes');
 const adminUserRoutes = require('./Routes/adminUser.routes');
 const adminRoleRoutes = require('./Routes/adminRole.routes');
+const adminCourseRoutes = require('./Routes/adminCourse.routes');
+const adminEnrollmentRoutes = require('./Routes/adminEnrollment.routes');
+const courseRoutes = require('./Routes/course.routes');
 
 const app = express();
 
@@ -21,6 +24,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/roles', adminRoleRoutes);
+app.use('/api/admin/courses', adminCourseRoutes);
+app.use('/api/admin/enrollments', adminEnrollmentRoutes);
+app.use('/api/v1/courses', courseRoutes);
 
 // Health Check
 app.get('/', (req, res) => {

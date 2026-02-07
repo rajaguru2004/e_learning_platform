@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 export default function CreateCourseModal() {
     return (
@@ -13,9 +14,11 @@ export default function CreateCourseModal() {
                     <div className="p-8 pb-4">
                         <div className="flex justify-between items-center mb-2">
                             <h2 className="text-2xl font-bold text-[#2E2E2E] dark:text-white">Create New Course</h2>
-                            <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
-                                <span className="material-symbols-outlined">close</span>
-                            </button>
+                            <Link href="/admin-courses">
+                                <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </Link>
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Start by giving your educational content a clear, engaging title.</p>
                     </div>
@@ -33,10 +36,14 @@ export default function CreateCourseModal() {
                     </div>
                     {/* Modal Footer */}
                     <div className="p-8 pt-4 flex items-center justify-end gap-4">
-                        <button className="px-6 py-3 text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-[#0f121a] dark:hover:text-white transition-colors">Cancel</button>
-                        <button className="flex items-center justify-center min-w-[140px] px-6 py-3 bg-primary hover:bg-[#162d66] active:scale-95 text-white rounded-lg text-sm font-bold tracking-wide transition-all shadow-lg shadow-primary/20">
-                            Create Course
-                        </button>
+                        <Link href="/admin-courses">
+                            <button className="px-6 py-3 text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-[#0f121a] dark:hover:text-white transition-colors">Cancel</button>
+                        </Link>
+                        <Link href="/course-editor">
+                            <button className="flex items-center justify-center min-w-[140px] px-6 py-3 bg-primary hover:bg-[#162d66] active:scale-95 text-white rounded-lg text-sm font-bold tracking-wide transition-all shadow-lg shadow-primary/20">
+                                Create Course
+                            </button>
+                        </Link>
                     </div>
                     {/* Tip */}
                     <div className="px-8 pb-6 text-center">
