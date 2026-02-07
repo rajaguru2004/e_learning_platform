@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:e_learn_app/app/data/models/learner_course_model.dart';
+import 'package:e_learn_app/app/data/services/api_service.dart';
 
 class LessonPlayerController extends GetxController {
   final RxBool isPlaying = false.obs;
@@ -37,9 +39,35 @@ class LessonPlayerController extends GetxController {
     }
   }
 
+  final course = Rx<CourseDetailModel?>(null);
+  final isLoading = true.obs;
+  final errorMessage = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
+    final dynamic args = Get.arguments;
+    if (args != null && args is String) {
+      fetchCourseDetail(args);
+    } else {
+      // For demo purposes, we might keep default values if no ID is provided
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchCourseDetail(String courseId) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final response = await ApiService.getCourseDetail(courseId);
+      course.value = response.data;
+    } catch (e) {
+      errorMessage.value = e.toString();
+      print('Error fetching course detail for player: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override

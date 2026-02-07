@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 
 import '../../../widgets/app_bottom_nav_bar.dart';
+import '../../../data/services/api_service.dart';
+import '../../../data/models/learner_course_model.dart';
+import '../../../data/models/enrollment_model.dart';
+import '../../../routes/app_pages.dart';
 
 class LibraryView extends StatefulWidget {
   const LibraryView({super.key});
@@ -12,46 +17,66 @@ class LibraryView extends StatefulWidget {
 
 class _LibraryViewState extends State<LibraryView> {
   int _selectedTabIndex = 0;
+  bool _isLoading = true;
+  String? _errorMessage;
 
-  final List<Map<String, dynamic>> _allCourses = [
-    {
-      'title': 'Advanced UI Design',
-      'subtitle': 'Design Systems & Interactions',
-      'points': 150,
-      'progress': 0.65,
-      'imageUrl':
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuCg1_FlS24MiLQaWbhB-OJqgGCBSLtdOwW-hGcXV3wDSFW5dx1qYuk7f3_toPsWfwq-a-lgMXMQ_cLvyWYw6zmmvDySXVPLd-CLnPprVzC7q_25hsVU9KLYydccqLcUI2gsiuATCOsvYTEMua_lUBaJgMsbK2JPNfPBoSuVr7tU274ahtt6fnoMJPmNWak-y6B5Qz2cSGzLP6MWnU12WiIyMud6syGgn3nsqdKmArVcOvOw64HhHSn46dFkXqesknlNXd10hPMMbr8',
-      'isActive': true,
-      'isCompleted': false,
-    },
-    {
-      'title': 'Intro to UX Research',
-      'subtitle': 'User Interviews & Analysis',
-      'points': 200,
-      'progress': 1.0,
-      'imageUrl':
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuBUyxSAAYYH3QzC2P0SevqMyoc72VmNAolvb0fd_nDGlmlBn4JNzNoZp5H4ts3d0mP8FdAzNMOnltB0bEwEa-v_9by_EdQ3U3QGY3n-CKbm6yRlpJenZ2ZJW21zfK95G5EyGIjvmTirfdcuTg5gs6e-NQAPkAMWJK9hdgCh697N5Q8mL6YWyBRxtbeDmx9B_oyywr3kG24tuEr2eXf1LguCUyynVJQQ44l8U6SKpHLhzH0lTqmbnoXTp-pTsFNjDIoRVEn7BH4Zg6w',
-      'isActive': false,
-      'isCompleted': true,
-    },
-    {
-      'title': 'Frontend Development',
-      'subtitle': 'React & Tailwind Frameworks',
-      'points': 350,
-      'progress': 0.12,
-      'imageUrl':
-          'https://lh3.googleusercontent.com/aida-public/AB6AXuAm5m8PTTPNZhW71fXaOC68vm2Z2BrL9ytPiYT24HVet1Bnfkx62CZFWqJC6hT7Bxg0PeUpxvJ4SNDuUPHjbTw_RaXYDAzyEYv-VxhQoOMUhx6fvwuL5joT5leDsz0cqloCw_hRT0XpCVoPykNyKS7eYt9rSeoi6370tsbq-Za67Kdur-uhIqFRsyL-yN8xc_M-eNl60mLevoHcseREXV42Mj482jw4j_21i8HvadgMit-Mh8YwOZwjlD8KSklxmfTBhap5lQpA-Xs',
-      'isActive': true,
-      'isCompleted': false,
-    },
+  List<LearnerCourseModel> _allCourses = [];
+  List<Enrollment> _enrollments = [];
+
+  // Static image URLs to use for courses (cycling through them)
+  final List<String> _staticImageUrls = [
+    'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400',
+    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400',
+    'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400',
+    'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400',
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400',
+    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',
   ];
 
-  List<Map<String, dynamic>> get _filteredCourses {
+  String _getImageUrl(int index) {
+    return _staticImageUrls[index % _staticImageUrls.length];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final results = await Future.wait([
+        ApiService.getLearnerCourses(),
+        ApiService.getEnrollments(),
+      ]);
+
+      final coursesResponse = results[0] as LearnerCoursesResponse;
+      final enrollmentsResponse = results[1] as EnrollmentResponse;
+
+      setState(() {
+        _allCourses = coursesResponse.data.courses;
+        _enrollments = enrollmentsResponse.data.enrollments;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
+    }
+  }
+
+  List<dynamic> get _filteredItems {
     if (_selectedTabIndex == 0) return _allCourses;
     if (_selectedTabIndex == 1) {
-      return _allCourses.where((c) => !c['isCompleted']).toList();
+      return _enrollments.where((e) => e.completedAt == null).toList();
     }
-    return _allCourses.where((c) => c['isCompleted']).toList();
+    return _enrollments.where((e) => e.completedAt != null).toList();
   }
 
   @override
@@ -147,24 +172,76 @@ class _LibraryViewState extends State<LibraryView> {
 
             // Course List Section
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                itemCount: _filteredCourses.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 20),
-                itemBuilder: (context, index) {
-                  final course = _filteredCourses[index];
-                  return LibraryCourseCard(
-                    title: course['title'],
-                    subtitle: course['subtitle'],
-                    points: course['points'],
-                    progress: course['progress'],
-                    imageUrl: course['imageUrl'],
-                    isActive: course['isActive'],
-                    isCompleted: course['isCompleted'],
-                  );
-                },
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _errorMessage != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: $_errorMessage'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _fetchData,
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : _filteredItems.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No courses found',
+                        style: GoogleFonts.lexend(color: Colors.grey),
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                      itemCount: _filteredItems.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 20),
+                      itemBuilder: (context, index) {
+                        final item = _filteredItems[index];
+
+                        if (item is LearnerCourseModel) {
+                          return LibraryCourseCard(
+                            title: item.title,
+                            subtitle: item.instructor.name,
+                            points: 0,
+                            progress: 0.0,
+                            imageUrl: _getImageUrl(index),
+                            isActive: false,
+                            isCompleted: false,
+                            isEnrolled: false,
+                            price: item.price,
+                            onTap: () {
+                              Get.toNamed(
+                                Routes.COURSE_DETAIL,
+                                arguments: item.id,
+                              );
+                            },
+                          );
+                        } else if (item is Enrollment) {
+                          return LibraryCourseCard(
+                            title: item.course.title,
+                            subtitle: item.course.instructor.name,
+                            points: 0,
+                            progress: item.progressPercent / 100,
+                            imageUrl: _getImageUrl(index),
+                            isActive: item.isActive,
+                            isCompleted: item.completedAt != null,
+                            isEnrolled: true,
+                            onTap: () {
+                              Get.toNamed(
+                                Routes.LESSON_PLAYER,
+                                arguments: item.course.id,
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
             ),
           ],
         ),
@@ -217,6 +294,9 @@ class LibraryCourseCard extends StatelessWidget {
   final String imageUrl;
   final bool isActive;
   final bool isCompleted;
+  final bool isEnrolled;
+  final String? price;
+  final VoidCallback? onTap;
 
   const LibraryCourseCard({
     super.key,
@@ -227,242 +307,259 @@ class LibraryCourseCard extends StatelessWidget {
     required this.imageUrl,
     required this.isActive,
     required this.isCompleted,
+    this.isEnrolled = true,
+    this.price,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[100]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Course Image
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-                child: ColorFiltered(
-                  colorFilter: isCompleted
-                      ? ColorFilter.mode(
-                          Colors.grey.withOpacity(0.3),
-                          BlendMode.saturation,
-                        )
-                      : const ColorFilter.mode(
-                          Colors.transparent,
-                          BlendMode.multiply,
-                        ),
-                  child: Image.network(
-                    imageUrl,
-                    height: 176,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 176,
-                        color: Colors.grey[300],
-                        child: const Center(child: Icon(Icons.image, size: 48)),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              if (isCompleted)
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2EC4B6).withOpacity(0.1),
-                    ),
-                  ),
-                ),
-              Positioned(
-                top: 12,
-                left: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isCompleted
-                        ? const Color(0xFF2EC4B6)
-                        : const Color(0xFF1F3D89),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    isCompleted ? 'COMPLETED' : 'ACTIVE',
-                    style: GoogleFonts.lexend(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Course Details
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[100]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Course Image
+            Stack(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: GoogleFonts.lexend(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
-                          color: const Color(0xFF2E2E2E),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.stars,
-                          color: Color(0xFFF4C430),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$points pts',
-                          style: GoogleFonts.lexend(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFFF4C430),
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: ColorFiltered(
+                    colorFilter: isCompleted
+                        ? ColorFilter.mode(
+                            Colors.grey.withOpacity(0.3),
+                            BlendMode.saturation,
+                          )
+                        : const ColorFilter.mode(
+                            Colors.transparent,
+                            BlendMode.multiply,
                           ),
-                        ),
-                      ],
+                    child: Image.network(
+                      imageUrl,
+                      height: 176,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          height: 176,
+                          color: Colors.grey[300],
+                          child: const Center(
+                            child: Icon(Icons.image, size: 48),
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.lexend(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[500],
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Progress Bar
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          isCompleted ? 'MASTERED' : 'CURRENT PROGRESS',
-                          style: GoogleFonts.lexend(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF2EC4B6),
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        Text(
-                          '${(progress * 100).toInt()}%',
-                          style: GoogleFonts.lexend(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: isCompleted
-                                ? const Color(0xFF2EC4B6)
-                                : const Color(0xFF2E2E2E),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        backgroundColor: isCompleted
-                            ? const Color(0xFF2EC4B6).withOpacity(0.2)
-                            : Colors.grey[100],
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Color(0xFF2EC4B6),
-                        ),
-                        minHeight: 8,
+                if (isCompleted)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2EC4B6).withOpacity(0.1),
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Action Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isCompleted
-                          ? Colors.white
+                  ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isCompleted
+                          ? const Color(0xFF2EC4B6)
                           : const Color(0xFF1F3D89),
-                      foregroundColor: isCompleted
-                          ? const Color(0xFF1F3D89)
-                          : Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: isCompleted
-                            ? const BorderSide(
-                                color: Color(0xFF1F3D89),
-                                width: 2,
-                              )
-                            : BorderSide.none,
-                      ),
-                      elevation: 0,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          isCompleted
-                              ? Icons.workspace_premium
-                              : Icons.play_arrow,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          isCompleted ? 'View Certificate' : 'Continue Lesson',
-                          style: GoogleFonts.lexend(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      !isEnrolled
+                          ? (price != null && price != '0' ? '₹$price' : 'FREE')
+                          : (isCompleted ? 'COMPLETED' : 'ACTIVE'),
+                      style: GoogleFonts.lexend(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+
+            // Course Details
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: GoogleFonts.lexend(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                            color: const Color(0xFF2E2E2E),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.stars,
+                            color: Color(0xFFF4C430),
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$points pts',
+                            style: GoogleFonts.lexend(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFFF4C430),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: GoogleFonts.lexend(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Progress Bar
+                  if (isEnrolled)
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              isCompleted ? 'MASTERED' : 'CURRENT PROGRESS',
+                              style: GoogleFonts.lexend(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF2EC4B6),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            Text(
+                              '${(progress * 100).toInt()}%',
+                              style: GoogleFonts.lexend(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: isCompleted
+                                    ? const Color(0xFF2EC4B6)
+                                    : const Color(0xFF2E2E2E),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            backgroundColor: isCompleted
+                                ? const Color(0xFF2EC4B6).withOpacity(0.2)
+                                : Colors.grey[100],
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFF2EC4B6),
+                            ),
+                            minHeight: 8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (isEnrolled) const SizedBox(height: 16),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: onTap,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isCompleted
+                            ? Colors.white
+                            : const Color(0xFF1F3D89),
+                        foregroundColor: isCompleted
+                            ? const Color(0xFF1F3D89)
+                            : Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: isCompleted
+                              ? const BorderSide(
+                                  color: Color(0xFF1F3D89),
+                                  width: 2,
+                                )
+                              : BorderSide.none,
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            !isEnrolled
+                                ? Icons.shopping_cart_outlined
+                                : (isCompleted
+                                      ? Icons.workspace_premium
+                                      : Icons.play_arrow),
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            !isEnrolled
+                                ? 'Enroll Now'
+                                : (isCompleted
+                                      ? 'View Certificate'
+                                      : 'Continue Lesson'),
+                            style: GoogleFonts.lexend(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

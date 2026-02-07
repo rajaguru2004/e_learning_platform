@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../modules/home/views/home_view.dart';
-import '../modules/library/views/library_view.dart';
-import '../modules/achievements/views/achievements_view.dart';
-import '../modules/profile/views/profile_view.dart';
+import 'package:get/get.dart';
+import '../routes/app_pages.dart';
 
 class AppBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -108,32 +106,24 @@ class AppBottomNavBar extends StatelessWidget {
   void _navigateTo(BuildContext context, int index) {
     if (index == currentIndex) return;
 
-    Widget page;
+    String route;
     switch (index) {
       case 0:
-        page = const HomeView();
+        route = Routes.HOME;
         break;
       case 1:
-        page = const LibraryView();
+        route = Routes.LIBRARY;
         break;
       case 2:
-        page = const AchievementsView();
+        route = Routes.ACHIEVEMENTS;
         break;
       case 3:
-        page = const ProfileView();
+        route = Routes.PROFILE;
         break;
       default:
         return;
     }
 
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
+    Get.offAllNamed(route);
   }
 }

@@ -106,19 +106,25 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
         child: Stack(
           children: [
             // Video thumbnail/background
-            Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuBTIJqyGnwRZ88Okp34oPWMbGdy4c6euzh6zowSkA6eRuxI-sGYA8kgRBmArvBK-wQhqI1_qpPWdUO0S-dvtgUAngyisqK0GJ0figqlkoZ7V9kO7LqmqAp60Gzi6qS-spBgb4EwIP1WoYK5CRaOwjExGNZN-FqNjspHZCx7YwRYyKbnHrX-eOyT3vs4_oFqp1-8Vf6UYFBp2Tv85qGQ12tuBQnLcdnxCi5p9XTk6s4sXWcKpVMxpXuqIkndTryVQjGZeI3l6MlaFQ4',
+            Obx(() {
+              final course = controller.course.value;
+              return Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      course?.thumbnailUrl ??
+                          'https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80',
+                    ),
+                    fit: BoxFit.cover,
                   ),
-                  fit: BoxFit.cover,
                 ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
-              ),
-            ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.3),
+                  ),
+                ),
+              );
+            }),
 
             // Play Button
             Center(
@@ -253,152 +259,183 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
   }
 
   Widget _buildModuleInfo() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1F3D89).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            'MODULE 03',
-            style: GoogleFonts.lexend(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF1F3D89),
-              letterSpacing: 1.5,
+    return Obx(() {
+      final course = controller.course.value;
+      return Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1F3D89).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              'MODULE 01',
+              style: GoogleFonts.lexend(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF1F3D89),
+                letterSpacing: 1.5,
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '• 15 mins',
-          style: GoogleFonts.lexend(
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[400],
+          const SizedBox(width: 8),
+          Text(
+            '• ${course?.duration ?? 0} mins',
+            style: GoogleFonts.lexend(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[400],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _buildLessonTitle() {
-    return Text(
-      'Mastering Grid Systems and Visual Hierarchy',
-      style: GoogleFonts.lexend(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: const Color(0xFF0F121A),
-        height: 1.2,
-      ),
-    );
+    return Obx(() {
+      final course = controller.course.value;
+      return Text(
+        course?.title ?? 'Mastering Grid Systems and Visual Hierarchy',
+        style: GoogleFonts.lexend(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF0F121A),
+          height: 1.2,
+        ),
+      );
+    });
   }
 
   Widget _buildInstructorCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[100]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[200],
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuAZAKtuSumTIhnZKGOJRoYNM5OxOdpbupKrytv-B9Y6tUe-8AVPXA6ibvnUlGGeOMHZY6TyQy6tEMnFGgq-KhKv-EiyxsMxCIfFBaBmh35BO6c2IHA5jodhTeMHl7WXJKzl0J-dmMhfiDmLPzNTXvr-X3kayGAN2d7TV4x1hzt8pFFX_hRKB3aJObAg5omJjm8eAHEOQANXyIkRCYN6CU0jsVaE71C9RkTlnv0gRonM8mdBeqB8qyKqRwbwiWkQAwPD0ahbysGBPnk',
-                ),
-                fit: BoxFit.cover,
-              ),
+    return Obx(() {
+      final course = controller.course.value;
+      final instructorName = course?.instructor.name ?? 'Alex Sterling';
+
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[100]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Alex Sterling',
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF1F3D89).withOpacity(0.1),
+              ),
+              child: Center(
+                child: Text(
+                  instructorName[0].toUpperCase(),
                   style: GoogleFonts.lexend(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF0F121A),
+                    color: const Color(0xFF1F3D89),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'Lead Design Instructor',
-                  style: GoogleFonts.lexend(
-                    fontSize: 11,
-                    color: Colors.grey[500],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TextButton(
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            ),
-            child: Text(
-              'Follow',
-              style: GoogleFonts.lexend(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF1F3D89),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    instructorName,
+                    style: GoogleFonts.lexend(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF0F121A),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Lead Design Instructor',
+                    style: GoogleFonts.lexend(
+                      fontSize: 11,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+              ),
+              child: Text(
+                'Follow',
+                style: GoogleFonts.lexend(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1F3D89),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildLessonDescription() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'In this comprehensive lesson, we\'ll dive deep into the mechanics of 12-column grid systems. Understanding how to balance whitespace with content is the cornerstone of professional UI design.',
+    return Obx(() {
+      final course = controller.course.value;
+      if (course != null) {
+        return Text(
+          course.description,
           style: GoogleFonts.lexend(
             fontSize: 14,
             color: Colors.grey[600],
             height: 1.6,
           ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'We will cover:',
-          style: GoogleFonts.lexend(
-            fontSize: 14,
-            color: Colors.grey[600],
-            height: 1.6,
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'In this comprehensive lesson, we\'ll dive deep into the mechanics of 12-column grid systems. Understanding how to balance whitespace with content is the cornerstone of professional UI design.',
+            style: GoogleFonts.lexend(
+              fontSize: 14,
+              color: Colors.grey[600],
+              height: 1.6,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        _buildBulletPoint('Fixed vs. Fluid grid structures'),
-        const SizedBox(height: 8),
-        _buildBulletPoint('Establishing a 4px horizontal baseline'),
-        const SizedBox(height: 8),
-        _buildBulletPoint('Gestalt principles in modern layout design'),
-      ],
-    );
+          const SizedBox(height: 16),
+          Text(
+            'We will cover:',
+            style: GoogleFonts.lexend(
+              fontSize: 14,
+              color: Colors.grey[600],
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildBulletPoint('Fixed vs. Fluid grid structures'),
+          const SizedBox(height: 8),
+          _buildBulletPoint('Establishing a 4px horizontal baseline'),
+          const SizedBox(height: 8),
+          _buildBulletPoint('Gestalt principles in modern layout design'),
+        ],
+      );
+    });
   }
 
   Widget _buildBulletPoint(String text) {
