@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/course_detail_controller.dart';
+import '../../quiz_intro/views/quiz_intro_view.dart';
 
 class CourseDetailView extends GetView<CourseDetailController> {
   const CourseDetailView({super.key});
@@ -507,14 +508,7 @@ class CourseDetailView extends GetView<CourseDetailController> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  Get.snackbar(
-                    'Quiz',
-                    'Quiz module coming soon!',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: const Color(0xFF1F3D89),
-                    colorText: Colors.white,
-                    margin: const EdgeInsets.all(16),
-                  );
+                  Get.to(() => const QuizIntroView());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
