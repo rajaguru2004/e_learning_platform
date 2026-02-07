@@ -3,6 +3,7 @@
 import { DashboardResponse } from '@/types/dashboard';
 import { LoginRequest, LoginResponse } from '@/types/auth';
 import { UsersResponse } from '@/types/users';
+import { RolesResponse, CreateRoleRequest, CreateRoleResponse } from '@/types/roles';
 import { getToken } from '@/lib/auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
@@ -113,3 +114,45 @@ export async function fetchUsers(
     const data: UsersResponse = await response.json();
     return data;
 }
+
+/**
+ * Fetches roles from the backend API
+ * @returns Promise resolving to roles data
+ * @throws Error if the API request fails
+ */
+export async function fetchRoles(): Promise<RolesResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/roles`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch roles: ${response.status} ${response.statusText}`);
+    }
+
+    const data: RolesResponse = await response.json();
+    return data;
+}
+
+/**
+ * Creates a new role with specified permissions
+ * @param roleData - Role data including name and permissions
+ * @returns Promise resolving to the created role
+ * @throws Error if the API request fails
+ */
+export async function createRole(roleData: CreateRoleRequest): Promise<CreateRoleResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/roles`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(roleData),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to create role: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CreateRoleResponse = await response.json();
+    return data;
+}
+
