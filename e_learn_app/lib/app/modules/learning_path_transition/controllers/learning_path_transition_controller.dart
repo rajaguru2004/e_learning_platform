@@ -54,16 +54,11 @@ class LearningPathTransitionController extends GetxController
       print('📊 Animation status: $status');
       if (status == AnimationStatus.completed) {
         animationCompleted.value = true;
-        print('✅ Animation completed! Redirecting in 1 second...');
-        // Auto-redirect after a delay (extended to 1 second)
-        Future.delayed(const Duration(milliseconds: 1000), () {
-          print('↩️ Navigating back to lesson player');
-          Get.back();
-          Get.snackbar(
-            'Next Lesson',
-            'Loading Lesson ${nextLessonIndex + 1}',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+        print('✅ Animation completed! Navigating to lesson player...');
+        // Navigate to lesson player after animation completes
+        Future.delayed(const Duration(milliseconds: 800), () {
+          print('🎯 Navigating to lesson player');
+          Get.offNamed('/lesson-player');
         });
       }
     });
