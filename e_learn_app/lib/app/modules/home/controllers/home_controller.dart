@@ -1,9 +1,11 @@
 import 'package:e_learn_app/app/data/models/learner_course_model.dart';
+import 'package:e_learn_app/app/data/models/profile_model.dart';
 import 'package:e_learn_app/app/data/services/api_service.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
   final courses = <LearnerCourseModel>[].obs;
+  final profile = Rxn<ProfileResponse>();
   final isLoading = true.obs;
   final errorMessage = ''.obs;
 
@@ -20,23 +22,30 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchCourses();
+    fetchAllData();
   }
 
-  Future<void> fetchCourses() async {
+  Future<void> fetchAllData() async {
     try {
       isLoading.value = true;
       errorMessage.value = '';
 
-      final response = await ApiService.getLearnerCourses();
-      courses.value = response.data.courses;
+      final results = await Future.wait([
+        ApiService.getLearnerCourses(),
+        ApiService.getProfile(),
+      ]);
+
+      courses.value = (results[0] as LearnerCoursesResponse).data.courses;
+      profile.value = results[1] as ProfileResponse;
     } catch (e) {
       errorMessage.value = e.toString();
-      print('Error fetching courses: $e');
+      print('Error fetching home data: $e');
     } finally {
       isLoading.value = false;
     }
   }
+
+  Future<void> fetchCourses() => fetchAllData();
 
   String getImageUrlForCourse(int index) {
     // Cycle through static images based on course index

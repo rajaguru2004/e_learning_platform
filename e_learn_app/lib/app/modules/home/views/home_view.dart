@@ -270,12 +270,14 @@ class HomeDashboard extends GetView<HomeController> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                Text(
-                  'LearnFlow',
-                  style: GoogleFonts.lexend(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
+                Obx(
+                  () => Text(
+                    controller.profile.value?.data.user.name ?? 'Learner',
+                    style: GoogleFonts.lexend(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                 ),
               ],
@@ -327,142 +329,148 @@ class HomeDashboard extends GetView<HomeController> {
   }
 
   Widget _buildProfileCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[100]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            top: -20,
-            child: Icon(
-              Icons.school,
-              size: 120,
-              color: Colors.black.withOpacity(0.03),
+    return Obx(() {
+      final stats = controller.profile.value?.data.stats;
+      final badgeName = stats?.currentBadge?.name ?? 'Beginner';
+      final totalPoints = stats?.totalPoints ?? 0;
+
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey[100]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Icon(
+                Icons.school,
+                size: 120,
+                color: Colors.black.withOpacity(0.03),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF4C430).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'BADGE LEVEL',
+                              style: GoogleFonts.lexend(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFF4C430),
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF4C430).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
+                          const SizedBox(height: 8),
+                          Text(
+                            badgeName,
+                            style: GoogleFonts.lexend(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          child: Text(
-                            'BADGE LEVEL',
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1F3D89).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.workspace_premium,
+                          color: Color(0xFF1F3D89),
+                          size: 24,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Container(height: 1, color: Colors.grey[100]),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'TOTAL POINTS',
                             style: GoogleFonts.lexend(
                               fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFFF4C430),
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[600],
                               letterSpacing: 1,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Gold Scholar',
-                          style: GoogleFonts.lexend(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 4),
+                          Text(
+                            totalPoints.toString(),
+                            style: GoogleFonts.lexend(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFFF4C430),
+                            ),
                           ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Get.toNamed(Routes.BADGES),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1F3D89),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 4,
                         ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1F3D89).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.workspace_premium,
-                        color: Color(0xFF1F3D89),
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Container(height: 1, color: Colors.grey[100]),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'TOTAL POINTS',
+                        child: Text(
+                          'View Badges',
                           style: GoogleFonts.lexend(
-                            fontSize: 10,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[600],
-                            letterSpacing: 1,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '1,250',
-                          style: GoogleFonts.lexend(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFFF4C430),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1F3D89),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 4,
                       ),
-                      child: Text(
-                        'View Badges',
-                        style: GoogleFonts.lexend(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }
 

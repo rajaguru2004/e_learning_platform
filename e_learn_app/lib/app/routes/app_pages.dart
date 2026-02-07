@@ -17,6 +17,8 @@ import '../modules/achievements/views/achievements_view.dart';
 import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/library/views/library_view.dart';
+import '../modules/badges/bindings/badges_binding.dart';
+import '../modules/badges/views/badges_view.dart';
 
 part 'app_routes.dart';
 
@@ -67,5 +69,10 @@ class AppPages {
       binding: ProfileBinding(),
     ),
     GetPage(name: _Paths.LIBRARY, page: () => const LibraryView()),
+    GetPage(
+      name: _Paths.BADGES,
+      page: () => const BadgesView(),
+      binding: BadgesBinding(),
+    ),
   ];
 }

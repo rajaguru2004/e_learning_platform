@@ -12,6 +12,7 @@ abstract class Routes {
   static const ACHIEVEMENTS = _Paths.ACHIEVEMENTS;
   static const PROFILE = _Paths.PROFILE;
   static const LIBRARY = _Paths.LIBRARY;
+  static const BADGES = _Paths.BADGES;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const ACHIEVEMENTS = '/achievements';
   static const PROFILE = '/profile';
   static const LIBRARY = '/library';
+  static const BADGES = '/badges';
 }
