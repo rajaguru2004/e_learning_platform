@@ -595,6 +595,11 @@ async function main() {
             create: { code: 'ADMIN_GRANT', name: 'Admin Grant', description: 'Points granted by administrator' }
         }),
         prisma.pointSource.upsert({
+            where: { code: 'ADMIN_DEDUCT' },
+            update: {},
+            create: { code: 'ADMIN_DEDUCT', name: 'Admin Deduct', description: 'Points deducted by administrator' }
+        }),
+        prisma.pointSource.upsert({
             where: { code: 'REFERRAL' },
             update: {},
             create: { code: 'REFERRAL', name: 'Referral Bonus', description: 'Points earned through referrals' }

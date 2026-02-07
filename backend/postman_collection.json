@@ -1226,6 +1226,381 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Admin Gamification Management",
+            "item": [
+                {
+                    "name": "Badge Management",
+                    "item": [
+                        {
+                            "name": "Create Badge",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Gold Champion\",\n  \"min_points\": 100,\n  \"max_points\": 200,\n  \"icon_url\": \"https://example.com/icons/gold.png\",\n  \"description\": \"Awarded for achieving 100-200 points\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/badges",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "badges"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Update Badge",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Gold Pro\",\n  \"min_points\": 110,\n  \"max_points\": 210,\n  \"description\": \"Updated description\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/badges/:badgeId",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "badges",
+                                        ":badgeId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "badgeId",
+                                            "value": "BADGE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Activate Badge",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"is_active\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/badges/:badgeId/status",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "badges",
+                                        ":badgeId",
+                                        "status"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "badgeId",
+                                            "value": "BADGE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Deactivate Badge",
+                            "request": {
+                                "method": "PATCH",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"is_active\": false\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/badges/:badgeId/status",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "badges",
+                                        ":badgeId",
+                                        "status"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "badgeId",
+                                            "value": "BADGE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Update Badge Icon",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"icon_url\": \"https://example.com/icons/gold-new.png\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/badges/:badgeId/icon",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "badges",
+                                        ":badgeId",
+                                        "icon"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "badgeId",
+                                            "value": "BADGE_ID_HERE"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get All Badges",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/badges?page=1&limit=10&sort=min_points",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "badges"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "active",
+                                            "value": "true",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "sort",
+                                            "value": "min_points"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Points Control",
+                    "item": [
+                        {
+                            "name": "Get Points Log",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/points?page=1&limit=10",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "points"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "user_id",
+                                            "value": "USER_ID_HERE",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "source",
+                                            "value": "QUIZ_COMPLETION",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2025-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2025-12-31",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "search",
+                                            "value": "john@example.com",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Grant Bonus Points",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": \"USER_ID_HERE\",\n  \"points\": 50,\n  \"reason\": \"Event participation bonus\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/points/grant",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "points",
+                                        "grant"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Deduct Points",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": \"USER_ID_HERE\",\n  \"points\": 20,\n  \"reason\": \"Policy violation penalty\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/points/deduct",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "points",
+                                        "deduct"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Leaderboard",
+                    "item": [
+                        {
+                            "name": "Get Leaderboard",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/leaderboard?page=1&limit=10",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "leaderboard"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2025-01-01",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2025-12-31",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "badge",
+                                            "value": "Gold Champion",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
