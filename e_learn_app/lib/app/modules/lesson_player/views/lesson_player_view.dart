@@ -653,6 +653,53 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
               ),
               const SizedBox(width: 12),
 
+              // Quiz Button
+              Expanded(
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.snackbar(
+                        'Quiz',
+                        'Quiz module coming soon!',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: const Color(0xFF1F3D89),
+                        colorText: Colors.white,
+                        margin: const EdgeInsets.all(16),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF1F3D89),
+                      elevation: 0,
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: const BorderSide(
+                          color: Color(0xFF1F3D89),
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.quiz_outlined, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Quiz',
+                          style: GoogleFonts.lexend(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+
               // Next Lesson Button
               Expanded(
                 child: SizedBox(
@@ -672,7 +719,7 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Next Lesson',
+                          'Next',
                           style: GoogleFonts.lexend(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
