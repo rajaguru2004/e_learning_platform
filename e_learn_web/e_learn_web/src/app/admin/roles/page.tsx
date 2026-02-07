@@ -20,20 +20,11 @@ export default function RolesPage() {
     const [newRoleName, setNewRoleName] = useState('');
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 
-    // Available permissions (you can expand this list based on your backend)
+    // Available permissions accepted by backend
     const availablePermissions = [
         'CREATE_COURSE',
         'EDIT_COURSE',
         'DELETE_COURSE',
-        'VIEW_COURSE',
-        'CREATE_USER',
-        'EDIT_USER',
-        'DELETE_USER',
-        'VIEW_USER',
-        'MANAGE_ROLES',
-        'VIEW_ANALYTICS',
-        'MANAGE_SETTINGS',
-        'APPROVE_CONTENT',
     ];
 
     // Fetch roles data
