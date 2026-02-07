@@ -30,6 +30,14 @@ import {
     LeaderboardResponse,
     CourseReviewsResponse
 } from '@/types/badges';
+import {
+    UserGrowthResponse,
+    CourseCompletionResponse,
+    QuizPerformanceResponse,
+    DropoffRateResponse,
+    PopularCategoriesResponse,
+    RevenueResponse
+} from '@/types/analytics';
 import { getToken } from '@/lib/auth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
@@ -694,4 +702,131 @@ export async function fetchCourseReviews(
     const data: CourseReviewsResponse = await response.json();
     return data;
 }
+
+// ==================== ANALYTICS REPORTS ====================
+
+/**
+ * Fetches user growth report from the backend API
+ * @param period - 'monthly' or 'weekly' time period
+ * @returns Promise resolving to user growth data
+ * @throws Error if the API request fails
+ */
+export async function fetchUserGrowthReport(period: 'monthly' | 'weekly' = 'monthly'): Promise<UserGrowthResponse> {
+    const params = new URLSearchParams({
+        period,
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/reports/user-growth?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch user growth report: ${response.status} ${response.statusText}`);
+    }
+
+    const data: UserGrowthResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches course completion report from the backend API
+ * @returns Promise resolving to course completion data
+ * @throws Error if the API request fails
+ */
+export async function fetchCourseCompletionReport(): Promise<CourseCompletionResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/reports/course-completion`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch course completion report: ${response.status} ${response.statusText}`);
+    }
+
+    const data: CourseCompletionResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches quiz performance report from the backend API
+ * @returns Promise resolving to quiz performance data
+ * @throws Error if the API request fails
+ */
+export async function fetchQuizPerformanceReport(): Promise<QuizPerformanceResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/reports/quiz-performance`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch quiz performance report: ${response.status} ${response.statusText}`);
+    }
+
+    const data: QuizPerformanceResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches drop-off rate report from the backend API
+ * @returns Promise resolving to drop-off rate data
+ * @throws Error if the API request fails
+ */
+export async function fetchDropoffRateReport(): Promise<DropoffRateResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/reports/dropoff-rate`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch drop-off rate report: ${response.status} ${response.statusText}`);
+    }
+
+    const data: DropoffRateResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches popular categories report from the backend API
+ * @returns Promise resolving to popular categories data
+ * @throws Error if the API request fails
+ */
+export async function fetchPopularCategoriesReport(): Promise<PopularCategoriesResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/reports/popular-categories`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch popular categories report: ${response.status} ${response.statusText}`);
+    }
+
+    const data: PopularCategoriesResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches revenue report from the backend API
+ * @param period - 'monthly' or 'weekly' time period
+ * @returns Promise resolving to revenue data
+ * @throws Error if the API request fails
+ */
+export async function fetchRevenueReport(period: 'monthly' | 'weekly' = 'monthly'): Promise<RevenueResponse> {
+    const params = new URLSearchParams({
+        period,
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/admin/reports/revenue?${params.toString()}`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch revenue report: ${response.status} ${response.statusText}`);
+    }
+
+    const data: RevenueResponse = await response.json();
+    return data;
+}
+
 

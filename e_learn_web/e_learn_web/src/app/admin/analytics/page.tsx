@@ -1,15 +1,130 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import StatsCard from '@/components/admin/ui/StatsCard';
+import {
+    fetchUserGrowthReport,
+    fetchCourseCompletionReport,
+    fetchQuizPerformanceReport,
+    fetchDropoffRateReport,
+    fetchPopularCategoriesReport,
+    fetchRevenueReport
+} from '@/lib/api';
+import {
+    UserGrowthData,
+    CourseCompletionData,
+    QuizPerformanceData,
+    DropoffRateData,
+    PopularCategoriesData,
+    RevenueData
+} from '@/types/analytics';
 
 export default function AnalyticsPage() {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
+
+    // Analytics data states
+    const [userGrowth, setUserGrowth] = useState<UserGrowthData | null>(null);
+    const [courseCompletion, setCourseCompletion] = useState<CourseCompletionData | null>(null);
+    const [quizPerformance, setQuizPerformance] = useState<QuizPerformanceData | null>(null);
+    const [dropoffRate, setDropoffRate] = useState<DropoffRateData | null>(null);
+    const [popularCategories, setPopularCategories] = useState<PopularCategoriesData | null>(null);
+    const [revenue, setRevenue] = useState<RevenueData | null>(null);
+
+    const fetchAllData = async () => {
+        try {
+            setError(null);
+
+            // Fetch all analytics data in parallel
+            const [
+                userGrowthRes,
+                courseCompletionRes,
+                quizPerformanceRes,
+                dropoffRateRes,
+                popularCategoriesRes,
+                revenueRes
+            ] = await Promise.all([
+                fetchUserGrowthReport('monthly'),
+                fetchCourseCompletionReport(),
+                fetchQuizPerformanceReport(),
+                fetchDropoffRateReport(),
+                fetchPopularCategoriesReport(),
+                fetchRevenueReport('monthly')
+            ]);
+
+            setUserGrowth(userGrowthRes.data);
+            setCourseCompletion(courseCompletionRes.data);
+            setQuizPerformance(quizPerformanceRes.data);
+            setDropoffRate(dropoffRateRes.data);
+            setPopularCategories(popularCategoriesRes.data);
+            setRevenue(revenueRes.data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to fetch analytics data');
+            console.error('Error fetching analytics:', err);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAllData();
+    }, []);
+
+    const handleRefresh = () => {
+        setRefreshing(true);
+        fetchAllData();
+    };
+
+    // Helper to get top category by enrollments
+    const getTopCategory = () => {
+        if (!popularCategories || popularCategories.categories.length === 0) {
+            return { name: 'N/A', enrollments: 0 };
+        }
+
+        const sorted = [...popularCategories.categories].sort(
+            (a, b) => b.totalEnrollments - a.totalEnrollments
+        );
+
+        return {
+            name: sorted[0].categoryName,
+            enrollments: sorted[0].totalEnrollments
+        };
+    };
+
+    const topCategory = getTopCategory();
+
     return (
         <AdminLayout
             pageTitle="Reporting & Analytics"
             headerActions={
-                <button className="admin-btn admin-btn-primary">📥 Export to CSV</button>
+                <button
+                    className="admin-btn admin-btn-primary"
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                >
+                    {refreshing ? '🔄 Refreshing...' : '🔄 Refresh Data'}
+                </button>
             }
         >
+            {/* Error Message */}
+            {error && (
+                <div
+                    style={{
+                        padding: 'var(--admin-space-lg)',
+                        marginBottom: 'var(--admin-space-xl)',
+                        backgroundColor: '#fee',
+                        border: '1px solid #fdd',
+                        borderRadius: 'var(--admin-radius-md)',
+                        color: '#c33',
+                    }}
+                >
+                    <strong>Error:</strong> {error}
+                </div>
+            )}
+
             {/* Platform-Level Reports */}
             <div style={{ marginBottom: 'var(--admin-space-3xl)' }}>
                 <h2
@@ -28,12 +143,72 @@ export default function AnalyticsPage() {
                         gap: 'var(--admin-space-xl)',
                     }}
                 >
-                    <StatsCard title="User Growth (30d)" value="+342" subtitle="15.2% increase" icon="📈" color="mint" />
-                    <StatsCard title="Course Completion Rate" value="68.4%" subtitle="↑ 5.2% from last month" icon="✅" color="mint" />
-                    <StatsCard title="Avg Quiz Performance" value="78.5%" subtitle="Platform-wide average" icon="📊" color="blue" />
-                    <StatsCard title="Drop-off Rate" value="12.3%" subtitle="↓ 2.1% improvement" icon="📉" color="coral" />
-                    <StatsCard title="Popular Category" value="Technology" subtitle="42% of enrollments" icon="💻" color="yellow" />
-                    <StatsCard title="Total Revenue (MTD)" value="$47,890" subtitle="↑ 8.3% from last month" icon="💰" color="mint" />
+                    <StatsCard
+                        title="Total Users"
+                        value={loading ? '...' : userGrowth?.totalUsers.toString() || 'N/A'}
+                        subtitle={loading ? 'Loading...' : `Period: ${userGrowth?.period || 'monthly'}`}
+                        icon="📈"
+                        color="mint"
+                    />
+                    <StatsCard
+                        title="Course Completion Rate"
+                        value={loading ? '...' : courseCompletion ? `${courseCompletion.completionPercentage.toFixed(2)}%` : 'N/A'}
+                        subtitle={
+                            loading
+                                ? 'Loading...'
+                                : courseCompletion
+                                    ? `${courseCompletion.completedEnrollments}/${courseCompletion.totalEnrollments} completed`
+                                    : 'No data'
+                        }
+                        icon="✅"
+                        color="mint"
+                    />
+                    <StatsCard
+                        title="Avg Quiz Performance"
+                        value={
+                            loading
+                                ? '...'
+                                : quizPerformance?.available
+                                    ? `${quizPerformance.plannedMetrics?.averageScore || 0}%`
+                                    : 'N/A'
+                        }
+                        subtitle={loading ? 'Loading...' : quizPerformance?.message || 'Not available'}
+                        icon="📊"
+                        color="blue"
+                    />
+                    <StatsCard
+                        title="Drop-off Rate"
+                        value={loading ? '...' : dropoffRate ? `${dropoffRate.dropOffPercentage.toFixed(2)}%` : 'N/A'}
+                        subtitle={
+                            loading
+                                ? 'Loading...'
+                                : dropoffRate
+                                    ? `${dropoffRate.incompleteEnrollments}/${dropoffRate.totalEnrollments} incomplete`
+                                    : 'No data'
+                        }
+                        icon="📉"
+                        color="coral"
+                    />
+                    <StatsCard
+                        title="Popular Category"
+                        value={loading ? '...' : topCategory.name}
+                        subtitle={loading ? 'Loading...' : `${topCategory.enrollments} enrollments`}
+                        icon="💻"
+                        color="yellow"
+                    />
+                    <StatsCard
+                        title="Total Revenue (MTD)"
+                        value={loading ? '...' : revenue ? `$${revenue.totalRevenue.toFixed(2)}` : 'N/A'}
+                        subtitle={
+                            loading
+                                ? 'Loading...'
+                                : revenue
+                                    ? `${revenue.successfulPayments} successful payments`
+                                    : 'No data'
+                        }
+                        icon="💰"
+                        color="mint"
+                    />
                 </div>
             </div>
 
@@ -48,8 +223,8 @@ export default function AnalyticsPage() {
                 >
                     Drill-Down Reports
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--admin-space-xl)' }}>
-                    {/* Per Instructor Performance */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(500px, 1fr))', gap: 'var(--admin-space-xl)' }}>
+                    {/* Popular Categories */}
                     <div className="admin-card">
                         <h3
                             style={{
@@ -58,41 +233,53 @@ export default function AnalyticsPage() {
                                 marginBottom: 'var(--admin-space-lg)',
                             }}
                         >
-                            Top Instructors by Enrollment
+                            Popular Categories
                         </h3>
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Instructor</th>
-                                    <th>Courses</th>
-                                    <th>Enrollments</th>
-                                    <th>Avg Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Sarah Johnson</td>
-                                    <td>8</td>
-                                    <td>2,450</td>
-                                    <td>⭐ 4.8</td>
-                                </tr>
-                                <tr>
-                                    <td>Robert Wilson</td>
-                                    <td>6</td>
-                                    <td>1,820</td>
-                                    <td>⭐ 4.6</td>
-                                </tr>
-                                <tr>
-                                    <td>Jennifer Lee</td>
-                                    <td>5</td>
-                                    <td>1,230</td>
-                                    <td>⭐ 4.9</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        {loading ? (
+                            <p style={{ textAlign: 'center', padding: 'var(--admin-space-xl)' }}>Loading...</p>
+                        ) : popularCategories && popularCategories.categories.length > 0 ? (
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Courses</th>
+                                        <th>Enrollments</th>
+                                        <th>Completion Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {popularCategories.categories
+                                        .sort((a, b) => b.totalEnrollments - a.totalEnrollments)
+                                        .map((category) => (
+                                            <tr key={category.categoryId}>
+                                                <td>{category.categoryName}</td>
+                                                <td>{category.totalCourses}</td>
+                                                <td>{category.totalEnrollments}</td>
+                                                <td
+                                                    style={{
+                                                        color:
+                                                            category.completionRate >= 70
+                                                                ? 'var(--admin-mint-green)'
+                                                                : category.completionRate >= 50
+                                                                    ? 'var(--admin-reward-yellow)'
+                                                                    : 'inherit',
+                                                        fontWeight: 'var(--admin-font-semibold)',
+                                                    }}
+                                                >
+                                                    {category.completionRate.toFixed(0)}%
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p style={{ textAlign: 'center', padding: 'var(--admin-space-xl)', color: 'var(--admin-text-muted)' }}>
+                                No category data available
+                            </p>
+                        )}
                     </div>
 
-                    {/* Per Course Performance */}
+                    {/* Enrollment Status Breakdown */}
                     <div className="admin-card">
                         <h3
                             style={{
@@ -101,121 +288,49 @@ export default function AnalyticsPage() {
                                 marginBottom: 'var(--admin-space-lg)',
                             }}
                         >
-                            Top Courses by Completion Rate
+                            Enrollment Status Breakdown
                         </h3>
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Course</th>
-                                    <th>Enrolled</th>
-                                    <th>Completed</th>
-                                    <th>Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Introduction to Python</td>
-                                    <td>1,250</td>
-                                    <td>980</td>
-                                    <td style={{ color: 'var(--admin-mint-green)', fontWeight: 'var(--admin-font-semibold)' }}>78%</td>
-                                </tr>
-                                <tr>
-                                    <td>Web Development Bootcamp</td>
-                                    <td>890</td>
-                                    <td>645</td>
-                                    <td style={{ color: 'var(--admin-mint-green)', fontWeight: 'var(--admin-font-semibold)' }}>72%</td>
-                                </tr>
-                                <tr>
-                                    <td>Machine Learning Advanced</td>
-                                    <td>670</td>
-                                    <td>420</td>
-                                    <td style={{ color: 'var(--admin-reward-yellow)', fontWeight: 'var(--admin-font-semibold)' }}>63%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Badge Distribution */}
-                    <div className="admin-card">
-                        <h3
-                            style={{
-                                fontSize: 'var(--admin-text-lg)',
-                                fontWeight: 'var(--admin-font-semibold)',
-                                marginBottom: 'var(--admin-space-lg)',
-                            }}
-                        >
-                            Badge Distribution
-                        </h3>
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Badge</th>
-                                    <th>Users</th>
-                                    <th>Percentage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>🥉 Beginner</td>
-                                    <td>1,250</td>
-                                    <td>44.5%</td>
-                                </tr>
-                                <tr>
-                                    <td>🥈 Silver Star</td>
-                                    <td>580</td>
-                                    <td>20.6%</td>
-                                </tr>
-                                <tr>
-                                    <td>🏆 Gold Champion</td>
-                                    <td>210</td>
-                                    <td>7.5%</td>
-                                </tr>
-                                <tr>
-                                    <td>💎 Diamond Elite</td>
-                                    <td>42</td>
-                                    <td>1.5%</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* Points Distribution */}
-                    <div className="admin-card">
-                        <h3
-                            style={{
-                                fontSize: 'var(--admin-text-lg)',
-                                fontWeight: 'var(--admin-font-semibold)',
-                                marginBottom: 'var(--admin-space-lg)',
-                            }}
-                        >
-                            Points Distribution (Top Earners)
-                        </h3>
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Points</th>
-                                    <th>Badge</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Emily Chen</td>
-                                    <td style={{ color: 'var(--admin-reward-yellow)', fontWeight: 'var(--admin-font-semibold)' }}>5,200</td>
-                                    <td>💎 Diamond</td>
-                                </tr>
-                                <tr>
-                                    <td>Robert Wilson</td>
-                                    <td style={{ color: 'var(--admin-reward-yellow)', fontWeight: 'var(--admin-font-semibold)' }}>4,850</td>
-                                    <td>💎 Diamond</td>
-                                </tr>
-                                <tr>
-                                    <td>Sarah Johnson</td>
-                                    <td style={{ color: 'var(--admin-reward-yellow)', fontWeight: 'var(--admin-font-semibold)' }}>3,400</td>
-                                    <td>💎 Diamond</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        {loading ? (
+                            <p style={{ textAlign: 'center', padding: 'var(--admin-space-xl)' }}>Loading...</p>
+                        ) : courseCompletion && courseCompletion.byStatus.length > 0 ? (
+                            <table className="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Count</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {courseCompletion.byStatus.map((status) => (
+                                        <tr key={status.status}>
+                                            <td style={{ textTransform: 'capitalize' }}>
+                                                {status.status.toLowerCase()}
+                                            </td>
+                                            <td>{status.count}</td>
+                                            <td
+                                                style={{
+                                                    color:
+                                                        status.status === 'COMPLETED'
+                                                            ? 'var(--admin-mint-green)'
+                                                            : 'inherit',
+                                                    fontWeight:
+                                                        status.status === 'COMPLETED'
+                                                            ? 'var(--admin-font-semibold)'
+                                                            : 'normal',
+                                                }}
+                                            >
+                                                {status.percentage.toFixed(2)}%
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (
+                            <p style={{ textAlign: 'center', padding: 'var(--admin-space-xl)', color: 'var(--admin-text-muted)' }}>
+                                No enrollment data available
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
