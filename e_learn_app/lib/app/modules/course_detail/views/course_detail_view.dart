@@ -505,7 +505,7 @@ class CourseDetailView extends GetView<CourseDetailController> {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () => Get.toNamed('/lesson-player'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1F3D89),
               foregroundColor: Colors.white,
