@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Enterprise Admin Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3d1f89",
+                        "accent": "#2EC4B6",
+                        "background-light": "#f8f9fb",
+                        "background-dark": "#16131f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display transition-colors duration-200">
+    <!-- Top Navigation Placeholder (Subtle) -->
+    <nav class="w-full px-8 py-6 flex justify-between items-center absolute top-0">
+        <div class="flex items-center gap-2">
+            <div class="bg-primary text-white p-1.5 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-xl">auto_graph</span>
+            </div>
+            <span class="text-[#2E2E2E] dark:text-gray-100 font-bold text-xl tracking-tight">EduNexus <span
+                    class="text-primary font-medium text-sm border-l border-gray-300 ml-2 pl-2">Admin</span></span>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-gray-500 dark:text-gray-400 text-sm font-medium flex items-center gap-1">
+                <span class="material-symbols-outlined text-xs text-green-500">fiber_manual_record</span>
+                System Status: Online
+            </span>
+        </div>
+    </nav>
+    <!-- Main Login Container -->
+    <main class="flex-1 flex items-center justify-center px-4 py-12">
+        <div
+            class="w-full max-w-[440px] bg-white dark:bg-[#1f1b2e] p-10 rounded-xl shadow-xl shadow-primary/5 border border-gray-100 dark:border-gray-800">
+            <!-- Header Section -->
+            <div class="text-center mb-10">
+                <div
+                    class="mb-4 inline-flex items-center justify-center w-16 h-16 bg-primary/5 dark:bg-primary/20 rounded-full">
+                    <span class="material-symbols-outlined text-primary text-3xl">admin_panel_settings</span>
+                </div>
+                <h1 class="text-2xl font-bold text-[#2E2E2E] dark:text-white mb-2">eLearning Admin Portal</h1>
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Login to your enterprise dashboard</p>
+            </div>
+            <!-- Login Form -->
+            <form action="#" class="space-y-6">
+                <!-- Email Field -->
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1" for="email">Email
+                        Address</label>
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-accent transition-colors">
+                            <span class="material-symbols-outlined text-xl">mail</span>
+                        </div>
+                        <input
+                            class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 dark:bg-[#28233a] border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
+                            id="email" name="email" placeholder="admin@company.com" type="email" />
+                    </div>
+                </div>
+                <!-- Password Field -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center ml-1">
+                        <label class="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                            for="password">Password</label>
+                        <a class="text-xs font-medium text-primary hover:text-accent transition-colors" href="#">Forgot
+                            password?</a>
+                    </div>
+                    <div class="relative group">
+                        <div
+                            class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-accent transition-colors">
+                            <span class="material-symbols-outlined text-xl">lock</span>
+                        </div>
+                        <input
+                            class="block w-full pl-11 pr-12 py-3.5 bg-gray-50 dark:bg-[#28233a] border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200"
+                            id="password" name="password" placeholder="••••••••" type="password" />
+                        <button
+                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            type="button">
+                            <span class="material-symbols-outlined text-xl">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Remember Me & Policy -->
+                <div class="flex items-center">
+                    <input class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary" id="remember"
+                        type="checkbox" />
+                    <label class="ml-2 text-sm text-gray-600 dark:text-gray-400" for="remember">Remember this device for
+                        30 days</label>
+                </div>
+                <!-- Submit Button -->
+                <button
+                    class="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-4 rounded-lg shadow-lg shadow-primary/20 transition-all duration-200 flex items-center justify-center gap-2"
+                    type="submit">
+                    <span>Login to Dashboard</span>
+                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                </button>
+            </form>
+            <!-- Footer Help -->
+            <div class="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800 text-center">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Having trouble logging in? <a class="text-primary font-semibold hover:underline" href="#">Contact
+                        Support</a>
+                </p>
+            </div>
+        </div>
+    </main>
+    <!-- Page Footer -->
+    <footer class="w-full py-8 text-center text-gray-400 text-xs px-4">
+        <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8">
+            <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">security</span>
+                AES-256 Encrypted Session
+            </span>
+            <p>© 2024 EduNexus Enterprise LMS. All rights reserved.</p>
+            <div class="flex gap-4">
+                <a class="hover:text-gray-600 transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-gray-600 transition-colors" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
