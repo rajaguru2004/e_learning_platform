@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/home_controller.dart';
+import '../../achievements/views/achievements_view.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -561,6 +562,14 @@ class BottomNavBar extends StatelessWidget {
                   icon: Icons.analytics,
                   label: 'Progress',
                   isActive: false,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AchievementsView(),
+                      ),
+                    );
+                  },
                 ),
                 _buildNavItem(
                   icon: Icons.person,
@@ -590,24 +599,28 @@ class BottomNavBar extends StatelessWidget {
     required IconData icon,
     required String label,
     required bool isActive,
+    VoidCallback? onTap,
   }) {
     final color = isActive ? const Color(0xFF1F3D89) : Colors.grey[600];
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.lexend(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: color,
-            letterSpacing: 0.5,
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.lexend(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: color,
+              letterSpacing: 0.5,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
