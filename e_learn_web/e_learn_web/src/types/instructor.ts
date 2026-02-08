@@ -34,11 +34,21 @@ export interface InstructorCourse {
     reviewer: InstructorInfo | null;
 }
 
+export interface Question {
+    questionText: string;
+    questionTypeId: 'SINGLE_CHOICE' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE';
+    options: string[];
+    correctAnswer: string;
+    points: number;
+    orderIndex: number;
+}
+
 export interface Subtopic {
     title: string;
     description: string;
     duration: number;
     videoFile?: File | null; // For form state handling
+    questions?: Question[];
 }
 
 export interface Topic {

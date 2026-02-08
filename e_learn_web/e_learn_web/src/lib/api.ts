@@ -376,7 +376,8 @@ export async function createCourse(courseData: CreateCourseRequest): Promise<Cre
             subtopics: topic.subtopics.map(sub => ({
                 title: sub.title,
                 description: sub.description,
-                duration: sub.duration
+                duration: sub.duration,
+                questions: sub.questions
             }))
         }));
 

@@ -83,7 +83,7 @@ class LessonPlayerController extends GetxController {
         currentSubtopic.value = firstSubtopic;
 
         final firstVideoUrl = firstSubtopic.videoUrl;
-        if (firstVideoUrl.isNotEmpty) {
+        if (firstVideoUrl!.isNotEmpty) {
           initializePlayer(firstVideoUrl);
         }
       }

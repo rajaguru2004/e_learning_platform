@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { CreateCourseRequest, Topic, Subtopic } from '@/types/instructor';
+import { CreateCourseRequest, Topic, Subtopic, Question } from '@/types/instructor';
 import { createCourse } from '@/lib/api';
 
 export default function CreateCoursePage() {
@@ -105,6 +105,130 @@ export default function CreateCoursePage() {
 
     const handleFileChange = (topicIndex: number, subtopicIndex: number, file: File | null) => {
         updateSubtopic(topicIndex, subtopicIndex, 'videoFile', file);
+    };
+
+    // --- Question Management ---
+
+    const addQuestion = (topicIndex: number, subtopicIndex: number) => {
+        setFormData(prev => {
+            const newTopics = [...(prev.topics || [])];
+            const currentSubtopic = newTopics[topicIndex].subtopics[subtopicIndex];
+            const questions = currentSubtopic.questions || [];
+
+            newTopics[topicIndex].subtopics[subtopicIndex] = {
+                ...currentSubtopic,
+                questions: [
+                    ...questions,
+                    {
+                        questionText: '',
+                        questionTypeId: 'SINGLE_CHOICE',
+                        options: ['', ''],
+                        correctAnswer: '',
+                        points: 5,
+                        orderIndex: questions.length
+                    }
+                ]
+            };
+            return { ...prev, topics: newTopics };
+        });
+    };
+
+    const removeQuestion = (topicIndex: number, subtopicIndex: number, questionIndex: number) => {
+        setFormData(prev => {
+            const newTopics = [...(prev.topics || [])];
+            const currentSubtopic = newTopics[topicIndex].subtopics[subtopicIndex];
+
+            newTopics[topicIndex].subtopics[subtopicIndex] = {
+                ...currentSubtopic,
+                questions: (currentSubtopic.questions || []).filter((_, i) => i !== questionIndex)
+            };
+            return { ...prev, topics: newTopics };
+        });
+    };
+
+    const updateQuestion = (topicIndex: number, subtopicIndex: number, questionIndex: number, field: keyof Question, value: any) => {
+        setFormData(prev => {
+            const newTopics = [...(prev.topics || [])];
+            const currentSubtopic = newTopics[topicIndex].subtopics[subtopicIndex];
+            const questions = [...(currentSubtopic.questions || [])];
+
+            questions[questionIndex] = { ...questions[questionIndex], [field]: value };
+
+            newTopics[topicIndex].subtopics[subtopicIndex] = {
+                ...currentSubtopic,
+                questions
+            };
+            return { ...prev, topics: newTopics };
+        });
+    };
+
+    const updateOption = (topicIndex: number, subtopicIndex: number, questionIndex: number, optionIndex: number, value: string) => {
+        setFormData(prev => {
+            const newTopics = [...(prev.topics || [])];
+            const currentSubtopic = newTopics[topicIndex].subtopics[subtopicIndex];
+            const questions = [...(currentSubtopic.questions || [])];
+            const options = [...questions[questionIndex].options];
+
+            options[optionIndex] = value;
+            questions[questionIndex] = { ...questions[questionIndex], options };
+
+            // If the changed option was the correct answer, update it too (optional, but good UX)
+            // For now, we rely on the user to select the correct answer explicitly using the radio button
+
+            newTopics[topicIndex].subtopics[subtopicIndex] = {
+                ...currentSubtopic,
+                questions
+            };
+            return { ...prev, topics: newTopics };
+        });
+    };
+
+    const addOption = (topicIndex: number, subtopicIndex: number, questionIndex: number) => {
+        setFormData(prev => {
+            const newTopics = [...(prev.topics || [])];
+            const currentSubtopic = newTopics[topicIndex].subtopics[subtopicIndex];
+            const questions = [...(currentSubtopic.questions || [])];
+
+            questions[questionIndex] = {
+                ...questions[questionIndex],
+                options: [...questions[questionIndex].options, '']
+            };
+
+            newTopics[topicIndex].subtopics[subtopicIndex] = {
+                ...currentSubtopic,
+                questions
+            };
+            return { ...prev, topics: newTopics };
+        });
+    };
+
+    const removeOption = (topicIndex: number, subtopicIndex: number, questionIndex: number, optionIndex: number) => {
+        setFormData(prev => {
+            const newTopics = [...(prev.topics || [])];
+            const currentSubtopic = newTopics[topicIndex].subtopics[subtopicIndex];
+            const questions = [...(currentSubtopic.questions || [])];
+
+            const options = questions[questionIndex].options.filter((_, i) => i !== optionIndex);
+
+            // If removed option was the correct answer, reset correct answer
+            let correctAnswer = questions[questionIndex].correctAnswer;
+            const removedOptionValue = questions[questionIndex].options[optionIndex];
+            if (correctAnswer === removedOptionValue) {
+                correctAnswer = '';
+            }
+
+            questions[questionIndex] = {
+                ...questions[questionIndex],
+                options,
+                correctAnswer
+            };
+
+            newTopics[topicIndex].subtopics[subtopicIndex] = {
+                ...currentSubtopic,
+                questions
+            };
+            return { ...prev, topics: newTopics };
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -405,6 +529,97 @@ export default function CreateCoursePage() {
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
+
+                                                {/* Questions Section */}
+                                                <div style={{ marginTop: 'var(--admin-space-md)', paddingTop: 'var(--admin-space-md)', borderTop: '1px dashed var(--admin-border-color)' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--admin-space-sm)' }}>
+                                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--admin-text-secondary)' }}>Quiz Questions ({sub.questions?.length || 0})</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => addQuestion(tIndex, sIndex)}
+                                                            style={{ fontSize: '0.8rem', color: 'var(--admin-primary)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}
+                                                        >
+                                                            + Add Question
+                                                        </button>
+                                                    </div>
+
+                                                    {sub.questions?.map((q, qIndex) => (
+                                                        <div key={qIndex} style={{
+                                                            backgroundColor: 'white',
+                                                            padding: 'var(--admin-space-sm)',
+                                                            borderRadius: 'var(--admin-radius-sm)',
+                                                            marginBottom: 'var(--admin-space-sm)',
+                                                            border: '1px solid var(--admin-border-color)'
+                                                        }}>
+                                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--admin-space-xs)' }}>
+                                                                <span style={{ fontSize: '0.8rem', fontWeight: 500 }}>Question {qIndex + 1}</span>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => removeQuestion(tIndex, sIndex, qIndex)}
+                                                                    style={{ color: 'var(--admin-danger)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', lineHeight: 1 }}
+                                                                >
+                                                                    &times;
+                                                                </button>
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                className="admin-input"
+                                                                placeholder="Enter question text"
+                                                                value={q.questionText}
+                                                                onChange={(e) => updateQuestion(tIndex, sIndex, qIndex, 'questionText', e.target.value)}
+                                                                style={{ marginBottom: 'var(--admin-space-xs)' }}
+                                                            />
+
+                                                            <div style={{ paddingLeft: 'var(--admin-space-md)' }}>
+                                                                <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-secondary)', marginBottom: '4px' }}>Options (Select correct answer):</div>
+                                                                {q.options.map((opt, optIndex) => (
+                                                                    <div key={optIndex} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                                                        <input
+                                                                            type="radio"
+                                                                            name={`correct_${tIndex}_${sIndex}_${qIndex}`}
+                                                                            checked={q.correctAnswer === opt && opt !== ''}
+                                                                            onChange={() => updateQuestion(tIndex, sIndex, qIndex, 'correctAnswer', opt)}
+                                                                            disabled={opt === ''}
+                                                                        />
+                                                                        <input
+                                                                            type="text"
+                                                                            className="admin-input"
+                                                                            value={opt}
+                                                                            onChange={(e) => updateOption(tIndex, sIndex, qIndex, optIndex, e.target.value)}
+                                                                            placeholder={`Option ${optIndex + 1}`}
+                                                                            style={{ padding: '4px 8px', fontSize: '0.85rem' }}
+                                                                        />
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => removeOption(tIndex, sIndex, qIndex, optIndex)}
+                                                                            style={{ color: 'var(--admin-text-secondary)', background: 'none', border: 'none', cursor: 'pointer' }}
+                                                                        >
+                                                                            &times;
+                                                                        </button>
+                                                                    </div>
+                                                                ))}
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => addOption(tIndex, sIndex, qIndex)}
+                                                                    style={{ fontSize: '0.8rem', color: 'var(--admin-primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                                                                >
+                                                                    + Add Option
+                                                                </button>
+
+                                                                <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                    <label style={{ fontSize: '0.8rem' }}>Points:</label>
+                                                                    <input
+                                                                        type="number"
+                                                                        className="admin-input"
+                                                                        value={q.points}
+                                                                        onChange={(e) => updateQuestion(tIndex, sIndex, qIndex, 'points', parseInt(e.target.value) || 0)}
+                                                                        style={{ width: '60px', padding: '4px 8px' }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
                                         ))}
