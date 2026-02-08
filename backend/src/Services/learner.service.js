@@ -97,6 +97,13 @@ async function getAllCourses(options = {}) {
             topics: {
                 include: {
                     subtopics: {
+                        include: {
+                            questions: {
+                                orderBy: {
+                                    orderIndex: 'asc'
+                                }
+                            }
+                        },
                         orderBy: {
                             orderIndex: 'asc'
                         }
@@ -155,6 +162,13 @@ async function getCourseDetails(courseId, userId = null) {
             topics: {
                 include: {
                     subtopics: {
+                        include: {
+                            questions: {
+                                orderBy: {
+                                    orderIndex: 'asc'
+                                }
+                            }
+                        },
                         orderBy: {
                             orderIndex: 'asc'
                         }

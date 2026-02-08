@@ -4,6 +4,7 @@ import 'package:e_learn_app/app/data/services/api_service.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import '../../lesson_player/views/quiz_bottom_sheet.dart';
 
 class LessonPlayerController extends GetxController {
   final RxBool isPlaying = false.obs;
@@ -43,8 +44,17 @@ class LessonPlayerController extends GetxController {
   }
 
   final course = Rx<CourseDetailModel?>(null);
+  final currentSubtopic = Rx<LearnerSubTopicModel?>(null);
   final isLoading = true.obs;
   final errorMessage = ''.obs;
+
+  // Quiz State
+  final RxInt currentQuestionIndex = 0.obs;
+  final Rx<String?> selectedAnswer = Rx<String?>(null);
+  final RxInt quizScore = 0.obs;
+  final RxBool isQuizCompleted = false.obs;
+  final RxBool showAnswerFeedback = false.obs;
+  final RxBool isAnswerCorrect = false.obs;
 
   @override
   void onInit() {
@@ -69,8 +79,10 @@ class LessonPlayerController extends GetxController {
       // Initialize video with the first topic's first subtopic video if available
       if (course.value?.topics.isNotEmpty == true &&
           course.value?.topics.first.subtopics.isNotEmpty == true) {
-        final firstVideoUrl =
-            course.value!.topics.first.subtopics.first.videoUrl;
+        final firstSubtopic = course.value!.topics.first.subtopics.first;
+        currentSubtopic.value = firstSubtopic;
+
+        final firstVideoUrl = firstSubtopic.videoUrl;
         if (firstVideoUrl.isNotEmpty) {
           initializePlayer(firstVideoUrl);
         }
@@ -187,5 +199,85 @@ class LessonPlayerController extends GetxController {
         isPlaying.value = true;
       }
     }
+  }
+
+  // Quiz Logic
+  void openQuiz() {
+    if (currentSubtopic.value == null ||
+        currentSubtopic.value!.questions.isEmpty) {
+      Get.snackbar('No Quiz', 'There is no quiz for this lesson.');
+      return;
+    }
+
+    // Reset quiz state
+    currentQuestionIndex.value = 0;
+    selectedAnswer.value = null;
+    quizScore.value = 0;
+    isQuizCompleted.value = false;
+    showAnswerFeedback.value = false;
+    isAnswerCorrect.value = false;
+
+    // Pause video if playing
+    if (videoPlayerController != null &&
+        videoPlayerController!.value.isPlaying) {
+      videoPlayerController!.pause();
+      isPlaying.value = false;
+    }
+
+    // Open Quiz Bottom Sheet
+    Get.bottomSheet(
+      const QuizBottomSheet(),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: false,
+      isDismissible: false,
+    );
+  }
+
+  void selectAnswer(String answer) {
+    if (showAnswerFeedback.value)
+      return; // Prevent changing answer after submission
+    selectedAnswer.value = answer;
+  }
+
+  void submitAnswer() {
+    if (selectedAnswer.value == null) return;
+
+    final question =
+        currentSubtopic.value!.questions[currentQuestionIndex.value];
+    final isCorrect = selectedAnswer.value == question.correctAnswer;
+
+    isAnswerCorrect.value = isCorrect;
+    showAnswerFeedback.value = true;
+
+    if (isCorrect) {
+      quizScore.value += question.points;
+    }
+  }
+
+  void nextQuestion() {
+    if (currentQuestionIndex.value <
+        currentSubtopic.value!.questions.length - 1) {
+      currentQuestionIndex.value++;
+      selectedAnswer.value = null;
+      showAnswerFeedback.value = false;
+      isAnswerCorrect.value = false;
+    } else {
+      isQuizCompleted.value = true;
+    }
+  }
+
+  void retryQuiz() {
+    currentQuestionIndex.value = 0;
+    selectedAnswer.value = null;
+    quizScore.value = 0;
+    isQuizCompleted.value = false;
+    showAnswerFeedback.value = false;
+    isAnswerCorrect.value = false;
+  }
+
+  void closeQuiz() {
+    Get.back(); // Close bottom sheet
+    // Resume video if it was playing before? (Optional, maybe keep paused)
   }
 }

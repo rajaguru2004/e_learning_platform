@@ -92,6 +92,7 @@ async function createCourse(courseData, instructor) {
                 console.error('Error parsing topics JSON:', e);
             }
 
+
             if (Array.isArray(topics) && topics.length > 0) {
                 for (const [tIndex, topic] of topics.entries()) {
                     const createdTopic = await prisma.topic.create({
@@ -102,13 +103,9 @@ async function createCourse(courseData, instructor) {
                             orderIndex: tIndex,
                         }
                     });
-
                     if (Array.isArray(topic.subtopics) && topic.subtopics.length > 0) {
                         for (const [sIndex, subtopic] of topic.subtopics.entries()) {
                             // Check if video file exists for this subtopic
-                            // The controller should have mapped files to subtopic indices or identifiers
-                            // For simplicity, we'll assume the controller passed a map of uploaded files
-
                             let videoUrl = null;
                             if (courseData.videoFiles && courseData.videoFiles[`${tIndex}_${sIndex}`]) {
                                 const file = courseData.videoFiles[`${tIndex}_${sIndex}`];
@@ -120,7 +117,7 @@ async function createCourse(courseData, instructor) {
                                 videoUrl = uploadResult;
                             }
 
-                            await prisma.subtopic.create({
+                            const createdSubtopic = await prisma.subtopic.create({
                                 data: {
                                     topicId: createdTopic.id,
                                     title: subtopic.title,
@@ -130,6 +127,23 @@ async function createCourse(courseData, instructor) {
                                     orderIndex: sIndex,
                                 }
                             });
+
+                            // 3. Process Questions if provided
+                            if (Array.isArray(subtopic.questions) && subtopic.questions.length > 0) {
+                                for (const [qIndex, question] of subtopic.questions.entries()) {
+                                    await prisma.question.create({
+                                        data: {
+                                            subtopicId: createdSubtopic.id,
+                                            questionText: question.questionText,
+                                            questionTypeId: question.questionTypeId, // Optional: if using QuestionType relation
+                                            options: question.options, // JSON array of options
+                                            correctAnswer: question.correctAnswer,
+                                            points: question.points ? parseInt(question.points) : 1,
+                                            orderIndex: qIndex,
+                                        }
+                                    });
+                                }
+                            }
                         }
                     }
                 }
@@ -152,7 +166,18 @@ async function createCourse(courseData, instructor) {
             },
             topics: {
                 include: {
-                    subtopics: true
+                    subtopics: {
+                        include: {
+                            questions: {
+                                orderBy: {
+                                    orderIndex: 'asc'
+                                }
+                            }
+                        },
+                        orderBy: {
+                            orderIndex: 'asc'
+                        }
+                    }
                 },
                 orderBy: {
                     orderIndex: 'asc'
@@ -227,6 +252,13 @@ async function getMyCourses(instructorId, options = {}) {
             topics: {
                 include: {
                     subtopics: {
+                        include: {
+                            questions: {
+                                orderBy: {
+                                    orderIndex: 'asc'
+                                }
+                            }
+                        },
                         orderBy: {
                             orderIndex: 'asc'
                         }
@@ -272,6 +304,25 @@ async function getCourseById(courseId, userId) {
                     id: true,
                     name: true,
                     email: true,
+                }
+            },
+            topics: {
+                include: {
+                    subtopics: {
+                        include: {
+                            questions: {
+                                orderBy: {
+                                    orderIndex: 'asc'
+                                }
+                            }
+                        },
+                        orderBy: {
+                            orderIndex: 'asc'
+                        }
+                    }
+                },
+                orderBy: {
+                    orderIndex: 'asc'
                 }
             }
         }

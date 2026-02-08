@@ -1105,7 +1105,7 @@
                                 },
                                 {
                                     "key": "topics",
-                                    "value": "[{\"title\":\"Module 1: Design Patterns\",\"description\":\"Introduction to design patterns\",\"subtopics\":[{\"title\":\"Singleton Pattern\",\"description\":\"Deep dive into Singleton\",\"duration\":300},{\"title\":\"Factory Pattern\",\"description\":\"Understanding Factory method\",\"duration\":450}]}]",
+                                    "value": "[{\"title\":\"Module 1: Design Patterns\",\"description\":\"Introduction to design patterns\",\"subtopics\":[{\"title\":\"Singleton Pattern\",\"description\":\"Deep dive into Singleton\",\"duration\":300,\"questions\":[{\"questionText\":\"What is the Singleton pattern?\",\"questionTypeId\":\"SINGLE_CHOICE\",\"options\":[\"A pattern to ensure a class has only one instance\",\"A pattern to create multiple instances\",\"A pattern to destroy instances\"],\"correctAnswer\":\"A pattern to ensure a class has only one instance\",\"points\":5}]},{\"title\":\"Factory Pattern\",\"description\":\"Understanding Factory method\",\"duration\":450}]}]",
                                     "type": "text"
                                 },
                                 {

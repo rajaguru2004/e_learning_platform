@@ -622,16 +622,7 @@ class LessonPlayerView extends GetView<LessonPlayerController> {
                 child: SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.snackbar(
-                        'Quiz',
-                        'Quiz module coming soon!',
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: const Color(0xFF1F3D89),
-                        colorText: Colors.white,
-                        margin: const EdgeInsets.all(16),
-                      );
-                    },
+                    onPressed: controller.openQuiz,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF1F3D89),

@@ -456,11 +456,32 @@ model Subtopic {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic     Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  questions Question[]
 
   @@index([topicId])
   @@index([orderIndex])
   @@map("subtopics")
+}
+
+model Question {
+  id             String   @id @default(uuid())
+  subtopicId     String   @map("subtopic_id")
+  questionTypeId String?  @map("question_type_id") // Reference to QuestionType
+  questionText   String   @map("question_text") @db.Text
+  options        Json?    // Array of options for MCQ, e.g., ["Option A", "Option B", "Option C", "Option D"]
+  correctAnswer  String?  @map("correct_answer") @db.Text // The correct answer or answer key
+  points         Int      @default(1) // Points for this question
+  orderIndex     Int      @map("order_index") // For ordering questions within a subtopic
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  subtopic Subtopic @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+
+  @@index([subtopicId])
+  @@index([orderIndex])
+  @@map("questions")
 }
 
 // ============================================================================
