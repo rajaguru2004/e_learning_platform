@@ -118,3 +118,42 @@ export interface DeleteCourseResponse {
     success: boolean;
     message: string;
 }
+
+export interface CourseEnrollmentRecord {
+    id: string;
+    enrolled_at: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+    };
+    payment_status: string;
+}
+
+export interface EnrichedInstructorCourse {
+    id: string;
+    title: string;
+    slug: string;
+    statusCode: string;
+    price: string;
+    enrollmentCount: number;
+    createdAt: string;
+    student_count: number;
+    revenue: number;
+    enrollments: CourseEnrollmentRecord[];
+}
+
+export interface InstructorStatsData {
+    summary: {
+        total_courses: number;
+        total_students: number;
+        total_revenue: number;
+    };
+    courses: EnrichedInstructorCourse[];
+}
+
+export interface InstructorStatsResponse {
+    success: boolean;
+    message: string;
+    data: InstructorStatsData;
+}

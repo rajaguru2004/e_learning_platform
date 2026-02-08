@@ -380,7 +380,7 @@ export default function CreateCoursePage() {
                             </div>
 
                             <div>
-                                <label className="admin-label">Price ($)</label>
+                                <label className="admin-label">Price (₹)</label>
                                 <input
                                     type="number"
                                     name="price"

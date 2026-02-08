@@ -1,4 +1,4 @@
-// API client utilities for e-learning platform
+// API client utilities for Metis platform
 
 import { DashboardResponse } from '@/types/dashboard';
 import { LoginRequest, LoginResponse } from '@/types/auth';
@@ -13,7 +13,8 @@ import {
     UpdateCourseRequest,
     UpdateCourseResponse,
     SubmitCourseResponse,
-    DeleteCourseResponse
+    DeleteCourseResponse,
+    InstructorStatsResponse
 } from '@/types/instructor';
 import {
     BadgesResponse,
@@ -509,6 +510,25 @@ export async function deleteCourse(courseId: string): Promise<DeleteCourseRespon
     }
 
     const data: DeleteCourseResponse = await response.json();
+    return data;
+}
+
+/**
+ * Fetches enrollment statistics and revenue for instructor's courses
+ * @returns Promise resolving to instructor stats data
+ * @throws Error if the API request fails
+ */
+export async function fetchInstructorStats(): Promise<InstructorStatsResponse> {
+    const response = await fetch(`${API_BASE_URL}/api/instructor/enrollments`, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch instructor stats: ${response.status} ${response.statusText}`);
+    }
+
+    const data: InstructorStatsResponse = await response.json();
     return data;
 }
 

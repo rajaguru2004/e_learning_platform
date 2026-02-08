@@ -24,6 +24,11 @@ const navigationItems: NavItem[] = [
         icon: '📝',
     },
     {
+        label: 'Enrollment Stats',
+        href: '/admin/instructor/stats',
+        icon: '📈',
+    },
+    {
         label: 'User Management',
         href: '/admin/users',
         icon: '👥',
@@ -130,7 +135,7 @@ export default function AdminSidebar() {
                                 marginBottom: '0.25rem',
                             }}
                         >
-                            eLearning
+                            Metis.
                         </h1>
                         <p
                             style={{
@@ -154,12 +159,12 @@ export default function AdminSidebar() {
             >
                 {navigationItems
                     .filter((item) => {
-                        // If user is instructor, ONLY show "My Courses"
+                        // If user is instructor, show "My Courses" and "Enrollment Stats"
                         if (isUserInstructor) {
-                            return item.label === 'My Courses';
+                            return ['My Courses', 'Enrollment Stats'].includes(item.label);
                         }
-                        // For non-instructors, show everything EXCEPT "My Courses"
-                        return item.label !== 'My Courses';
+                        // For non-instructors, show everything EXCEPT those
+                        return !['My Courses', 'Enrollment Stats'].includes(item.label);
                     })
                     .map((item) => (
                         <div key={item.label}>
@@ -297,7 +302,7 @@ export default function AdminSidebar() {
                     color: 'var(--admin-text-muted)',
                 }}
             >
-                <p>eLearning Platform v1.0</p>
+                <p>Metis Platform v1.0</p>
                 <p>© 2026 Admin Panel</p>
             </div>
         </aside>

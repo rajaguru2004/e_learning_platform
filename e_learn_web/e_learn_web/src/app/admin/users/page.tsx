@@ -203,6 +203,7 @@ export default function UsersPage() {
                     style={{ width: '200px' }}
                     value={roleFilter}
                     onChange={(e) => {
+                        debugger
                         setRoleFilter(e.target.value);
                         setCurrentPage(1);
                     }}

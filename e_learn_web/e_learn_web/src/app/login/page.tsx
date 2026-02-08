@@ -27,7 +27,6 @@ export default function LoginPage() {
         e.preventDefault();
         setErrors({ email: '', password: '' });
 
-        // Basic validation
         let hasErrors = false;
         const newErrors = { email: '', password: '' };
 
@@ -42,9 +41,6 @@ export default function LoginPage() {
         if (!formData.password) {
             newErrors.password = 'Password is required';
             hasErrors = true;
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
-            hasErrors = true;
         }
 
         if (hasErrors) {
@@ -55,37 +51,27 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            // Import dependencies dynamically to avoid SSR issues
             const { login } = await import('@/lib/api');
             const { saveToken, saveUser } = await import('@/lib/auth');
 
-            // Call login API
             const response = await login({
                 email: formData.email,
                 password: formData.password
             });
 
-            // Save auth token and user data
             saveToken(response.data.token);
             saveUser(response.data.user);
 
-            console.log('Login successful:', {
-                email: formData.email,
-                userId: response.data.user.id,
-                role: response.data.user.role.code
-            });
-
-            // Redirect based on role
             if (response.data.user.role.code === 'INSTRUCTOR') {
                 router.push('/admin/instructor/dashboard');
             } else {
                 router.push('/admin/dashboard');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Login error:', error);
             setErrors({
                 email: '',
-                password: error instanceof Error ? error.message : 'Invalid email or password. Please try again.'
+                password: error.message || 'Invalid email or password. Please try again.'
             });
         } finally {
             setIsLoading(false);
@@ -93,139 +79,129 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="login-container gradient-bg">
-            {/* Animated Background Elements */}
-            <div className="background-shapes">
-                <div className="shape shape-1"></div>
-                <div className="shape shape-2"></div>
-                <div className="shape shape-3"></div>
-            </div>
-
-            {/* Login Card */}
-            <div className="login-card glass-effect fade-in">
-                {/* Logo/Brand Section */}
-                <div className="login-header">
-                    <div className="logo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#gradient1)" />
-                            <path d="M2 17L12 22L22 17" stroke="url(#gradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M2 12L12 17L22 12" stroke="url(#gradient2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <defs>
-                                <linearGradient id="gradient1" x1="2" y1="2" x2="22" y2="12" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#667eea" />
-                                    <stop offset="1" stopColor="#764ba2" />
-                                </linearGradient>
-                                <linearGradient id="gradient2" x1="2" y1="12" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#f093fb" />
-                                    <stop offset="1" stopColor="#f5576c" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-                    <h1 className="login-title">Welcome Back</h1>
-                    <p className="login-subtitle">Sign in to continue to your learning journey</p>
-                </div>
-
-                {/* Login Form */}
-                <form onSubmit={handleSubmit} className="login-form">
-                    {/* Email Input */}
-                    <div className="form-group">
-                        <label htmlFor="email" className="form-label">
-                            Email Address
-                        </label>
-                        <div className="input-wrapper">
-                            <svg className="input-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 8L10.89 13.26C11.5423 13.7013 12.4577 13.7013 13.11 13.26L21 8M5 19H19C20.1046 19 21 18.1046 21 17V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <input
-                                type="email"
-                                id="email"
-                                className={`form-input ${errors.email ? 'input-error' : ''}`}
-                                placeholder="you@example.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        {errors.email && <p className="error-message">{errors.email}</p>}
+        <div className="login-container">
+            {/* Left Side: Brand Section */}
+            <div className="brand-section">
+                <div className="brand-content animate-up">
+                    <div className="brand-logo">
+                        <div className="brand-logo-icon">🎓</div>
+                        <span>Metis.</span>
                     </div>
 
-                    {/* Password Input */}
-                    <div className="form-group">
-                        <label htmlFor="password" className="form-label">
-                            Password
-                        </label>
-                        <div className="input-wrapper">
-                            <svg className="input-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="currentColor" strokeWidth="2" />
-                                <path d="M12 8V4M12 20V16M20 12H16M8 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                            </svg>
-                            <input
-                                type="password"
-                                id="password"
-                                className={`form-input ${errors.password ? 'input-error' : ''}`}
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                disabled={isLoading}
-                            />
-                        </div>
-                        {errors.password && <p className="error-message">{errors.password}</p>}
-                    </div>
+                    <h1 className="brand-headline">
+                        Empower your <br />
+                        future with <br />
+                        <span style={{ color: '#60a5fa' }}>modern learning.</span>
+                    </h1>
 
-                    {/* Remember Me & Forgot Password */}
-                    <div className="form-options">
-                        <label className="checkbox-label">
-                            <input
-                                type="checkbox"
-                                className="checkbox-input"
-                                checked={formData.rememberMe}
-                                onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                                disabled={isLoading}
-                            />
-                            <span className="checkbox-text">Remember me</span>
-                        </label>
-                        <Link href="/forgot-password" className="forgot-link">
-                            Forgot password?
-                        </Link>
-                    </div>
-
-                    {/* Submit Button */}
-                    <button
-                        type="submit"
-                        className={`submit-button ${isLoading ? 'loading' : ''}`}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <span className="spinner"></span>
-                                Signing in...
-                            </>
-                        ) : (
-                            'Sign In'
-                        )}
-                    </button>
-                </form>
-
-                {/* Footer */}
-                <div className="login-footer">
-                    <p className="footer-text">
-                        Don&apos;t have an account?{' '}
-                        <Link href="/admin-signup" className="footer-link">
-                            Sign up
-                        </Link>
+                    <p className="brand-subheadline">
+                        Join our community of over 50,000 learners and instructors.
+                        Access world-class courses and build skills that matter.
                     </p>
+
+                    <div className="feature-list">
+                        <div className="feature-item">
+                            <div className="feature-icon">✓</div>
+                            <span>Expert-led video courses</span>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">✓</div>
+                            <span>Interactive quizzes and assignments</span>
+                        </div>
+                        <div className="feature-item">
+                            <div className="feature-icon">✓</div>
+                            <span>Certificates of completion</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Additional Info Card */}
-            <div className="info-card glass-effect fade-in">
-                <p className="info-text">
-                    <svg className="info-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 16H12V12H11M12 8H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    First time here? Use your email and a password to sign in.
-                </p>
+            {/* Right Side: Form Section */}
+            <div className="form-section">
+                <div className="login-wrapper animate-up" style={{ animationDelay: '0.1s' }}>
+                    <div className="form-header">
+                        <h2 className="form-title">Login to account</h2>
+                        <p className="form-subtitle">Enter your credentials to access your dashboard</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="login-form">
+                        <div className="form-group">
+                            <label className="form-label" htmlFor="email">Email Address</label>
+                            <div className="input-container">
+                                <input
+                                    type="email"
+                                    id="email"
+                                    className="form-input"
+                                    placeholder="name@company.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    disabled={isLoading}
+                                    required
+                                />
+                            </div>
+                            {errors.email && <p className="error-text">{errors.email}</p>}
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label" htmlFor="password">Password</label>
+                            <div className="input-container">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    className="form-input"
+                                    placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    disabled={isLoading}
+                                    required
+                                />
+                            </div>
+                            {errors.password && <p className="error-text">{errors.password}</p>}
+                        </div>
+
+                        <div className="form-utils">
+                            <label className="remember-me">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.rememberMe}
+                                    onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                                />
+                                <span>Remember me</span>
+                            </label>
+                            <Link href="/forgot-password" hidden className="forgot-pw">Forgot password?</Link>
+                        </div>
+
+                        <button type="submit" className="btn-login" disabled={isLoading}>
+                            {isLoading ? (
+                                <>
+                                    <span className="spinner"></span>
+                                    <span>Processing...</span>
+                                </>
+                            ) : (
+                                <span>Sign In to Platform</span>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="social-login">
+                        <div className="social-divider">Or continue with</div>
+                        <div className="social-btns">
+                            <button className="btn-social">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" alt="Google" />
+                                <span>Google</span>
+                            </button>
+                            <button className="btn-social">
+                                <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" width="20" alt="Facebook" />
+                                <span>Facebook</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="footer-signup">
+                        Don't have an account?{' '}
+                        <Link href="/signup" className="signup-link">Get started</Link>
+                    </div>
+                </div>
             </div>
         </div>
     );
